@@ -1,0 +1,32 @@
+---
+description: Rules for using absolute paths in imports and references
+globs: **/*.{ts,html}
+alwaysApply: true
+---
+
+- All imports must use **absolute paths**, never relative paths (`../` or `./`).
+
+- The Angular project must be configured to support **path aliases** in `tsconfig.json`, for example:
+  ```json
+  {
+    "compilerOptions": {
+      "baseUrl": "src",
+      "paths": {
+        "@app/*": ["app/*"],
+        "@shared/*": ["app/shared/*"],
+        "@core/*": ["app/core/*"]
+      }
+    }
+  }
+  ```
+  
+- Cursor must always prefer absolute imports when creating new files or modifying existing ones.
+
+- This applies to all project entities:
+    - Components
+    - Services
+    - Interfaces
+    - Pipes
+    - Guards
+    - Utility files
+    - And any other modules or classes.

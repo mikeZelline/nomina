@@ -1,0 +1,89 @@
+<app-modal 
+  [isOpen]="isOpen()" 
+  title="Seleccionar Empresa"
+  size="lg"
+  (close)="onClose()">
+  
+  <div class="empresas-container">
+    <!-- Buscador -->
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input 
+          type="text" 
+          placeholder="Buscar por NIT (solo números) o nombre..."
+          class="search-input"
+          (input)="onSearchChange($event)"
+          [value]="searchTerm()">
+      </div>
+    </div>
+    
+    <!-- Error -->
+    @if (error()) {
+      <div class="error-container">
+        <svg class="error-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+        <p>{{ error() }}</p>
+        <button class="retry-button" (click)="loadEmpresas()">
+          Reintentar
+        </button>
+      </div>
+    }
+    
+    <!-- Lista de empresas -->
+    @if (!error()) {
+      <div class="empresas-list">
+        @if (filteredEmpresas().length === 0) {
+          <div class="no-results">
+            <svg class="no-results-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <h3>No se encontraron empresas</h3>
+            <p>@if (searchTerm()) {
+              Intenta con otro NIT o nombre de empresa
+            } @else {
+              No hay empresas disponibles
+            }</p>
+          </div>
+        } @else {
+          @for (empresa of filteredEmpresas(); track empresa.secuencia) {
+            <div class="empresa-item" (click)="onEmpresaClick(empresa)">
+              <div class="empresa-info">
+                <h4 class="empresa-name">{{ empresa.nombre }}</h4>
+                <div class="empresa-details">
+                  <span class="empresa-nit">NIT: {{ formatNit(empresa.nit) }}</span>
+                  <span class="empresa-codigo">Código: {{ empresa.codigo }}</span>
+                </div>
+              </div>
+              <div class="empresa-arrow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9,18 15,12 9,6"></polyline>
+                </svg>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    }
+    
+    <!-- Paginación -->
+    @if (!error() && empresas().length > 0) {
+      <app-pagination
+        [currentPage]="currentPage()"
+        [firstPageUrl]="firstPageUrl()"
+        [nextPageUrl]="nextPageUrl()"
+        [prevPageUrl]="prevPageUrl()"
+        (firstPage)="goToFirstPage()"
+        (nextPage)="goToNextPage()"
+        (prevPage)="goToPrevPage()">
+      </app-pagination>
+    }
+  </div>
+</app-modal>

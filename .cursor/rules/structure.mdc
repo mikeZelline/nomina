@@ -1,0 +1,93 @@
+---
+description: Rules for the folder and file structure of modules and components in Angular projects
+globs: **/*.{ts,html,css}
+alwaysApply: true
+---
+
+- All **modules** and **components** in Angular must follow a clear and consistent folder structure.  
+- Code, templates, and styles must remain fully separated — no inline code.
+
+---
+
+### 🗂 Folder organization
+
+- All **modules** must be located under:
+src/app/modules/
+
+
+Examples:
+src/app/modules/payroll/
+src/app/modules/users/
+src/app/modules/reports/
+
+- Each module must contain **only three base files**, with **no subfolders or additional files**:
+name.module.ts
+name.module.html
+name.module.css
+
+✅ Correct:
+src/app/modules/payroll/
+├── payroll.module.ts
+├── payroll.module.html
+└── payroll.module.css
+
+❌ Incorrect:
+src/app/modules/payroll/components/
+src/app/modules/payroll/table/
+src/app/modules/payroll/parameters-payroll.component.ts
+
+- All **components** — whether reusable or specific to a module — must be located under:
+
+Examples:
+src/app/components/modal/
+src/app/components/confirmation/
+src/app/components/data-table/
+src/app/components/search-bar/
+src/app/components/payroll-parameters/
+
+- Each component must include exactly three files:
+name.component.ts
+name.component.html
+name.component.css
+
+---
+
+### 📦 Conventions and best practices
+
+- **No subfolders are allowed inside module folders.**
+- **Do not place components inside module folders.**
+- Keep code types separated:
+- ❌ No inline HTML or CSS inside `.ts` files.  
+- ❌ No `style` attributes inside HTML files.
+
+- TypeScript files should only handle logic, state, and data communication — never direct DOM manipulation or presentation logic.
+
+---
+
+### ✅ Example structure
+src/app/
+├── components/
+│ ├── modal/
+│ │ ├── modal.component.ts
+│ │ ├── modal.component.html
+│ │ └── modal.component.css
+│ ├── confirmation/
+│ │ ├── confirmation.component.ts
+│ │ ├── confirmation.component.html
+│ │ └── confirmation.component.css
+│
+└── modules/
+├── payroll/
+│ ├── payroll.module.ts
+│ ├── payroll.module.html
+│ └── payroll.module.css
+├── users/
+│ ├── users.module.ts
+│ ├── users.module.html
+│ └── users.module.css
+
+---
+
+- Cursor must **automatically create files and folders** according to this structure.  
+- If Cursor tries to create a component inside a module, it must instead place it in `src/app/components/` and reference it from there.  
+- Module folders must remain **flat and clean**, containing only their three base files.

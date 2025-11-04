@@ -1,0 +1,25 @@
+<app-modal 
+  [isOpen]="isOpen()" 
+  [title]="'Editar CUNE - ' + getEmpleadoInfo()"
+  [size]="'lg'"
+  (close)="onClose()">
+  
+  <div class="cune-form">
+    <div class="form-group">
+      <label for="cune">CUNE</label>
+      <textarea 
+        id="cune"
+        [value]="cuneValue()"
+        (input)="cuneValue.set($any($event.target).value)"
+        class="cune-textarea"
+        rows="6"
+        placeholder="Ingrese el valor del CUNE..."></textarea>
+    </div>
+    
+    <div class="form-actions">
+      <button class="btn-secondary" (click)="onClose()">Cancelar</button>
+      <button class="btn-primary" (click)="onSave()">Guardar</button>
+    </div>
+  </div>
+</app-modal>
+

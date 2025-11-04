@@ -1,0 +1,264 @@
+<div class="parametros-table">
+  <table>
+    <thead>
+      <!-- Primera fila: Títulos de columnas con iconos de filtro -->
+      <tr class="header-row">
+        <th>
+          <div class="header-content">
+            <span>Año</span>
+            <button 
+              class="filter-icon-btn" 
+              (click)="toggleFilter('ano')"
+              [class.active]="showFilters">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+              </svg>
+            </button>
+          </div>
+        </th>
+        <th>
+          <div class="header-content">
+            <span>Mes</span>
+            <button 
+              class="filter-icon-btn" 
+              (click)="toggleFilter('mes')"
+              [class.active]="showFilters">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+              </svg>
+            </button>
+          </div>
+        </th>
+        <th>
+          <div class="header-content">
+            <span>Sucursal Pila</span>
+            <button 
+              class="filter-icon-btn" 
+              (click)="toggleFilter('sucursal')"
+              [class.active]="showFilters">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+              </svg>
+            </button>
+          </div>
+        </th>
+        <th>
+          <div class="header-content">
+            <span>Procedimiento</span>
+            <button 
+              class="filter-icon-btn" 
+              (click)="toggleFilter('procedimiento')"
+              [class.active]="showFilters">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+              </svg>
+            </button>
+          </div>
+        </th>
+        <th>
+          <div class="header-content">
+            <span>Consecutivo</span>
+            <button 
+              class="filter-icon-btn" 
+              (click)="toggleFilter('consecutivo')"
+              [class.active]="showFilters">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+              </svg>
+            </button>
+          </div>
+        </th>
+        <th>
+          <div class="header-content">
+            <span>Lote</span>
+            <button 
+              class="filter-icon-btn" 
+              (click)="toggleFilter('lote')"
+              [class.active]="showFilters">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+              </svg>
+            </button>
+          </div>
+        </th>
+        <th>
+          <div class="header-content">
+            <span>Enviados</span>
+            <button 
+              class="filter-icon-btn" 
+              (click)="toggleFilter('enviados')"
+              [class.active]="showFilters">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+              </svg>
+            </button>
+          </div>
+        </th>
+        <th>
+          <div class="header-content">
+            <span>Acciones</span>
+          </div>
+        </th>
+      </tr>
+      <!-- Segunda fila: Filtros (ocultos por defecto) -->
+      <tr class="filter-row" [class.hidden]="!showFilters">
+        <td>
+          <app-filter-input
+            [value]="anoFilter?.toString() || ''"
+            placeholder="Filtrar por año..."
+            type="number"
+            (valueChange)="onAnoFilterChangeValue($event)">
+          </app-filter-input>
+        </td>
+        <td>
+          <div class="filter-container">
+            <select 
+              [(ngModel)]="mesFilter"
+              (ngModelChange)="onFilterChange()"
+              class="filter-select">
+              <option value="">Todos</option>
+              @for (mes of meses; track mes) {
+                <option [value]="mes">{{ mes }}</option>
+              }
+            </select>
+          </div>
+        </td>
+        <td>
+          <app-filter-input
+            [value]="''"
+            placeholder="Filtrar por sucursal..."
+            type="text"
+            (valueChange)="onFilterChange()">
+          </app-filter-input>
+        </td>
+        <td>
+          <div class="filter-container">
+            <select class="filter-select">
+              <option value="">Todos</option>
+              @for (procedimiento of procedimientos; track procedimiento) {
+                <option [value]="procedimiento.value">{{ procedimiento.label }}</option>
+              }
+            </select>
+          </div>
+        </td>
+        <td>
+          <app-filter-input
+            [value]="''"
+            placeholder="Filtrar por consecutivo..."
+            type="number"
+            (valueChange)="onFilterChange()">
+          </app-filter-input>
+        </td>
+        <td>
+          <app-filter-input
+            [value]="''"
+            placeholder="Filtrar por lote..."
+            type="number"
+            (valueChange)="onFilterChange()">
+          </app-filter-input>
+        </td>
+        <td>
+          <div class="filter-container">
+            <select class="filter-select">
+              <option value="">Todos</option>
+              @for (estado of estadosEnvio; track estado) {
+                <option [value]="estado.value">{{ estado.label }}</option>
+              }
+            </select>
+          </div>
+        </td>
+        <td>
+          <div class="filter-container">
+            <!-- Sin filtro para acciones -->
+          </div>
+        </td>
+      </tr>
+    </thead>
+    <tbody>
+      @for (lote of lotes(); track lote.secuencia; let i = $index) {
+        <tr [class.selected]="i === 0">
+          <td>
+            <input 
+              type="number" 
+              [value]="lote.ano"
+              class="param-input" readonly>
+          </td>
+          <td>
+            <input 
+              type="text" 
+              [value]="getMesFormateado(lote.mes_nombre)"
+              class="param-input" 
+              readonly>
+          </td>
+          <td>
+            <input 
+              type="text" 
+              [value]="lote.sucursalpila || ''"
+              class="param-input" readonly>
+          </td>
+          <td>
+            <input 
+              type="text" 
+              [value]="getProcedimiento(lote.accion)"
+              class="param-input" 
+              readonly>
+          </td>
+          <td>
+            <input 
+              type="number" 
+              [value]="lote.consecutivo"
+              class="param-input" readonly>
+          </td>
+          <td>
+            <input 
+              type="number" 
+              [value]="lote.lote"
+              class="param-input" readonly>
+          </td>
+          <td>
+            <select 
+              [ngModel]="lote.candado"
+              (ngModelChange)="onCandadoChange(lote, $event)"
+              class="param-select">
+              @for (estado of estadosEnvio; track estado) {
+                <option [value]="estado.value">{{ estado.label }}</option>
+              }
+            </select>
+          </td>
+          <td>
+            <div class="actions-container">
+              <button class="action-btn action-clone" (click)="onClonar(lote)" title="Clonar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+              <button class="action-btn action-delete" (click)="onEliminar(lote)" title="Eliminar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      }
+      @if (lotes().length === 0) {
+        <tr>
+          <td colspan="8" class="no-data">
+            <div class="no-data-content">
+              <p class="no-data-message">No hay lotes disponibles para esta empresa.</p>
+              <button class="create-link-btn" (click)="onCrear()" type="button">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Crear uno nuevo
+              </button>
+            </div>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

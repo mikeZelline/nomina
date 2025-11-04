@@ -1,0 +1,645 @@
+<!-- Desktop Table -->
+<div class="desktop-table-container">
+  <table class="comprobantes-table">
+    <thead>
+      <tr class="header-row">
+        <th width="40" class="sticky-col-1"></th>
+        <th class="sticky-col-2">
+          <div class="header-content">
+            <span>Cód. empleado</span>
+            <button 
+              class="filter-icon-btn" 
+              (click)="toggleFilter()"
+              [class.active]="showFilters()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+              </svg>
+            </button>
+          </div>
+        </th>
+        <th class="sticky-col-3">
+          <div class="header-content">
+            <span>Nombre Empleado</span>
+            <button 
+              class="filter-icon-btn" 
+              (click)="toggleFilter()"
+              [class.active]="showFilters()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+              </svg>
+            </button>
+          </div>
+        </th>
+        <th>CUNE</th>
+        <th># Comprobante</th>
+        <th>Marcación</th>
+        <th>Devengado Total</th>
+        <th>Deducido Total</th>
+        <th>Comprob. Total</th>
+        <th>Días L.</th>
+        <th>Sueldo Trabaj.</th>
+        <th>A. Transporte</th>
+        <th>Manu. Aloja Sal.</th>
+        <th>Manu. Aloja No Sal.</th>
+        <th>Hora ED</th>
+        <th>Hora EN</th>
+        <th>Hora RN</th>
+        <th>Vacaciones Com.</th>
+        <th>Días Vac. Com.</th>
+        <th>Prima Legal</th>
+        <th>Días Prima Legal</th>
+        <th>Cesantías</th>
+        <th>Int. Cesantías</th>
+        <th>Incapacidades</th>
+        <th>Días Incap.</th>
+        <th>Maternidad/Paternidad</th>
+        <th>Días Maternidad</th>
+        <th>Licencia Rem.</th>
+        <th>Días Lic. Rem.</th>
+        <th>Licencia No Rem.</th>
+        <th>Días Lic. No Rem.</th>
+        <th>Bonif. Salarial</th>
+        <th>Bonif. No Salarial</th>
+        <th>Auxilio Salarial</th>
+        <th>Auxilio No Salarial</th>
+        <th>Huelga</th>
+        <th>Días Huelga</th>
+        <th>Otros Salariales</th>
+        <th>Otros No Salariales</th>
+        <th>Comp. Ordinario</th>
+        <th>Comp. Extra</th>
+        <th>Bono Electrónico Sal.</th>
+        <th>Bono Electrónico No Sal.</th>
+        <th>Bono Elec. Aliment. Sal.</th>
+        <th>Bono Elec. Aliment. No Sal.</th>
+        <th>Comisión</th>
+        <th>Pago Terceros</th>
+        <th>Anticipo</th>
+        <th>Dotación</th>
+        <th>Apoyo Sostenimiento</th>
+        <th>Teletrabajo</th>
+        <th>Bonif. Retiro</th>
+        <th>Indemnización</th>
+        <th>Pago Reintegro</th>
+        <th>Oblig. Salud</th>
+        <th>Oblig. Pensión</th>
+        <th>Oblig. Solid. Pensión</th>
+        <th>Oblig. Solid. Subsistencia</th>
+        <th>Desc. Sindicato</th>
+        <th>Desc. Sanción Pública</th>
+        <th>Desc. Sanción Privada</th>
+        <th>Desc. Libranza</th>
+        <th>Desc. Terceros</th>
+        <th>Desc. Anticipos</th>
+        <th>Desc. Otras Deudas</th>
+        <th>Desc. Pensión Volunt.</th>
+        <th>Desc. Retefte</th>
+        <th>Desc. ICA</th>
+        <th>Desc. AFC</th>
+        <th>Desc. Cooperativa</th>
+        <th>Desc. Embargo</th>
+        <th>Desc. Plan Complementario</th>
+        <th>Desc. Educación</th>
+        <th>Desc. Reintegro</th>
+        <th>Desc. Deuda Empresa</th>
+        <th>Tracking ID</th>
+        <th>Fecha Desde</th>
+        <th>Fecha Hasta</th>
+        <th>Nov. Contractual</th>
+        <th>UUID Designer</th>
+      </tr>
+      <!-- Fila de filtros -->
+      <tr class="filter-row" [class.hidden]="!showFilters()">
+        <td class="sticky-col-1"></td>
+        <td class="sticky-col-2">
+          <app-filter-input
+            [value]="codigoEmpleadoFilter()"
+            placeholder="Filtrar por código..."
+            type="text"
+            (valueChange)="codigoEmpleadoFilter.set($event); onCodigoEmpleadoFilterChange()">
+          </app-filter-input>
+        </td>
+        <td class="sticky-col-3">
+          <app-filter-input
+            [value]="nombreEmpleadoFilter()"
+            placeholder="Filtrar por nombre..."
+            type="text"
+            (valueChange)="nombreEmpleadoFilter.set($event); onNombreEmpleadoFilterChange()">
+          </app-filter-input>
+        </td>
+        <td colspan="78"></td>
+      </tr>
+    </thead>
+    <tbody>
+      @for (comprobante of comprobantes(); track comprobante.secuencia) {
+        <tr 
+          [class.selected]="selectedComprobante()?.secuencia === comprobante.secuencia"
+          (click)="onComprobanteClick(comprobante)">
+          <td class="action-cell sticky-col-1">
+            <button class="row-action-button">...</button>
+          </td>
+          <td class="code-cell sticky-col-2">{{ comprobante.empleado }}</td>
+          <td class="name-cell sticky-col-3">{{ comprobante.nombre_empleado }}</td>
+          <td class="cune-cell">
+            <input 
+              type="text" 
+              [value]="comprobante.cune || ''"
+              (blur)="onCuneChange(comprobante, $event)"
+              (click)="$event.stopPropagation()"
+              (dblclick)="onCuneDblClick(comprobante, $event)"
+              class="cune-input">
+          </td>
+          <td class="comprobante-number-cell">{{ comprobante.numerocomprobantedian }}</td>
+          <td class="marcacion-cell">
+            <span [class.status-enviado]="comprobante.marcacion === 'ENVIADO'"
+                  [class.status-rechazado]="comprobante.marcacion === 'RECHAZADO'">
+              {{ comprobante.marcacion }}
+            </span>
+          </td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.devengadototal) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.deducidototal) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.comprobantetotal) }}</td>
+          <td class="number-cell">{{ comprobante.diaslaborados }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.sueldotrabajado) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.aux_transporte) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.manu_aloja_salarial) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.manu_aloja_nosalarial) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.hora_ed) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.hora_en) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.hora_rn) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.vaca_comun) }}</td>
+          <td class="number-cell">{{ comprobante.vaca_dias_comun }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.primalegal) }}</td>
+          <td class="number-cell">{{ comprobante.dias_primalegal }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.cesantias) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.interesescesantias) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.incapacidades) }}</td>
+          <td class="number-cell">{{ comprobante.incapacidades_dias }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.maternidad_paternidad) }}</td>
+          <td class="number-cell">{{ comprobante.maternidad_dias }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.licencia_remunerada) }}</td>
+          <td class="number-cell">{{ comprobante.licencia_remunerada_dias }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.licencia_noremunerada) }}</td>
+          <td class="number-cell">{{ comprobante.licencia_noremunerada_dias }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.bonificacion_salarial) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.bonificacion_nosalarial) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.auxilio_salarial) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.auxilio_nosalarial) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.huelga) }}</td>
+          <td class="number-cell">{{ comprobante.huelga_dias }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.otros_salariales) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.otros_nosalariales) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.comp_ordinario) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.comp_extra) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.bono_electronico_salarial) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.bono_electronico_nosalarial) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.bono_elec_aliment_salarial) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.bono_elec_aliment_nosalarial) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.comision) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.pago_terceros) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.anticipo) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.dotacion) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.apoyo_sostenimiento) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.teletrabajo) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.bonificacion_retiro) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.indemnizacion) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.pago_reintegro) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.obligatorio_salud) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.obligatorio_pension) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.obligatorio_solid_pension) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.obligatorio_solid_subsistencia) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.descuento_sindicato) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.descuento_sancion_publica) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.descuento_sancion_privada) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.descuento_libranza) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.descuento_terceros) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.descuento_anticipos) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.descuento_otras_deudas) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.descuento_pension_volunt) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.descuento_retefte) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.descuento_ica) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.descuento_afc) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.descuento_cooperativa) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.descuento_embargo) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.descuento_plan_complementario) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.descuento_educacion) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.descuento_reintegro) }}</td>
+          <td class="amount-cell">{{ formatCurrency(comprobante.descuento_deuda_empresa) }}</td>
+          <td class="text-cell">{{ comprobante.tracking_id || '-' }}</td>
+          <td class="date-cell">{{ formatDate(comprobante.fechadesde) }}</td>
+          <td class="date-cell">{{ formatDate(comprobante.fechahasta) }}</td>
+          <td class="text-cell">{{ comprobante.nov_contractual }}</td>
+          <td class="text-cell">{{ comprobante.uuid_designer || '-' }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<!-- Mobile Div Layout -->
+<div class="mobile-table-container">
+  <div class="mobile-header">
+    <div class="mobile-header-cell mobile-sticky-col-1">
+      <button 
+        class="filter-icon-btn mobile-filter-btn" 
+        (click)="toggleFilter()"
+        [class.active]="showFilters()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+        </svg>
+      </button>
+    </div>
+    <div class="mobile-header-cell mobile-sticky-col-2">Cód. empleado</div>
+    <div class="mobile-header-cell mobile-sticky-col-3">Nombre Empleado</div>
+  </div>
+  
+  <!-- Fila de filtros móvil -->
+  @if (showFilters()) {
+    <div class="mobile-filter-row">
+      <div class="mobile-filter-cell mobile-sticky-col-1"></div>
+      <div class="mobile-filter-cell mobile-sticky-col-2">
+        <app-filter-input
+          [value]="codigoEmpleadoFilter()"
+          placeholder="Filtrar por código..."
+          type="text"
+          (valueChange)="codigoEmpleadoFilter.set($event); onCodigoEmpleadoFilterChange()">
+        </app-filter-input>
+      </div>
+      <div class="mobile-filter-cell mobile-sticky-col-3">
+        <app-filter-input
+          [value]="nombreEmpleadoFilter()"
+          placeholder="Filtrar por nombre..."
+          type="text"
+          (valueChange)="nombreEmpleadoFilter.set($event); onNombreEmpleadoFilterChange()">
+        </app-filter-input>
+      </div>
+    </div>
+  }
+  
+  @for (comprobante of comprobantes(); track comprobante.secuencia) {
+    <div class="mobile-row" 
+         [class.selected]="selectedComprobante()?.secuencia === comprobante.secuencia"
+         (click)="onComprobanteClick(comprobante)">
+      
+      <!-- Static top section with first 3 fields -->
+      <div class="mobile-static-row">
+        <div class="mobile-static-cell mobile-sticky-col-1">
+          <button class="row-action-button">...</button>
+        </div>
+        <div class="mobile-static-cell mobile-sticky-col-2">{{ comprobante.empleado }}</div>
+        <div class="mobile-static-cell mobile-sticky-col-3">{{ comprobante.nombre_empleado }}</div>
+      </div>
+      
+      <!-- Scrollable bottom section with remaining fields -->
+      <div class="mobile-scrollable-row">
+        <div class="mobile-field">
+          <div class="mobile-field-label">CUNE</div>
+          <div class="mobile-field-value">
+            <input 
+              type="text" 
+              [value]="comprobante.cune || ''"
+              (blur)="onCuneChange(comprobante, $event)"
+              (click)="$event.stopPropagation()"
+              (dblclick)="onCuneDblClick(comprobante, $event)"
+              (touchstart)="onCuneTouchStart(comprobante, $event)"
+              (touchend)="onCuneTouchEnd(comprobante, $event)"
+              class="mobile-cune-input">
+          </div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label"># Comprobante</div>
+          <div class="mobile-field-value">{{ comprobante.numerocomprobantedian }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Marcación</div>
+          <div class="mobile-field-value">
+            <span [class.status-enviado]="comprobante.marcacion === 'ENVIADO'"
+                  [class.status-rechazado]="comprobante.marcacion === 'RECHAZADO'">
+              {{ comprobante.marcacion }}
+            </span>
+          </div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Devengado Total</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.devengadototal) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Deducido Total</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.deducidototal) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Comprob. Total</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.comprobantetotal) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Días L.</div>
+          <div class="mobile-field-value">{{ comprobante.diaslaborados }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Sueldo Trabaj.</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.sueldotrabajado) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">A. Transporte</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.aux_transporte) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Manu. Aloja Sal.</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.manu_aloja_salarial) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Manu. Aloja No Sal.</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.manu_aloja_nosalarial) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Hora ED</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.hora_ed) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Hora EN</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.hora_en) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Hora RN</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.hora_rn) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Vacaciones Com.</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.vaca_comun) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Días Vac. Com.</div>
+          <div class="mobile-field-value">{{ comprobante.vaca_dias_comun }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Prima Legal</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.primalegal) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Días Prima Legal</div>
+          <div class="mobile-field-value">{{ comprobante.dias_primalegal }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Cesantías</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.cesantias) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Int. Cesantías</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.interesescesantias) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Incapacidades</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.incapacidades) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Días Incap.</div>
+          <div class="mobile-field-value">{{ comprobante.incapacidades_dias }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Maternidad/Paternidad</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.maternidad_paternidad) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Días Maternidad</div>
+          <div class="mobile-field-value">{{ comprobante.maternidad_dias }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Licencia Rem.</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.licencia_remunerada) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Días Lic. Rem.</div>
+          <div class="mobile-field-value">{{ comprobante.licencia_remunerada_dias }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Licencia No Rem.</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.licencia_noremunerada) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Días Lic. No Rem.</div>
+          <div class="mobile-field-value">{{ comprobante.licencia_noremunerada_dias }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Bonif. Salarial</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.bonificacion_salarial) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Bonif. No Salarial</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.bonificacion_nosalarial) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Auxilio Salarial</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.auxilio_salarial) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Auxilio No Salarial</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.auxilio_nosalarial) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Huelga</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.huelga) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Días Huelga</div>
+          <div class="mobile-field-value">{{ comprobante.huelga_dias }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Otros Salariales</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.otros_salariales) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Otros No Salariales</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.otros_nosalariales) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Comp. Ordinario</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.comp_ordinario) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Comp. Extra</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.comp_extra) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Bono Electrónico Sal.</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.bono_electronico_salarial) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Bono Electrónico No Sal.</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.bono_electronico_nosalarial) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Bono Elec. Aliment. Sal.</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.bono_elec_aliment_salarial) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Bono Elec. Aliment. No Sal.</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.bono_elec_aliment_nosalarial) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Comisión</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.comision) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Pago Terceros</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.pago_terceros) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Anticipo</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.anticipo) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Dotación</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.dotacion) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Apoyo Sostenimiento</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.apoyo_sostenimiento) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Teletrabajo</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.teletrabajo) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Bonif. Retiro</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.bonificacion_retiro) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Indemnización</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.indemnizacion) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Pago Reintegro</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.pago_reintegro) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Oblig. Salud</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.obligatorio_salud) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Oblig. Pensión</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.obligatorio_pension) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Oblig. Solid. Pensión</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.obligatorio_solid_pension) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Oblig. Solid. Subsistencia</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.obligatorio_solid_subsistencia) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Desc. Sindicato</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.descuento_sindicato) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Desc. Sanción Pública</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.descuento_sancion_publica) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Desc. Sanción Privada</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.descuento_sancion_privada) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Desc. Libranza</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.descuento_libranza) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Desc. Terceros</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.descuento_terceros) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Desc. Anticipos</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.descuento_anticipos) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Desc. Otras Deudas</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.descuento_otras_deudas) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Desc. Pensión Volunt.</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.descuento_pension_volunt) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Desc. Retefte</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.descuento_retefte) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Desc. ICA</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.descuento_ica) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Desc. AFC</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.descuento_afc) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Desc. Cooperativa</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.descuento_cooperativa) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Desc. Embargo</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.descuento_embargo) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Desc. Plan Complementario</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.descuento_plan_complementario) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Desc. Educación</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.descuento_educacion) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Desc. Reintegro</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.descuento_reintegro) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Desc. Deuda Empresa</div>
+          <div class="mobile-field-value">{{ formatCurrency(comprobante.descuento_deuda_empresa) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Tracking ID</div>
+          <div class="mobile-field-value">{{ comprobante.tracking_id || '-' }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Fecha Desde</div>
+          <div class="mobile-field-value">{{ formatDate(comprobante.fechadesde) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Fecha Hasta</div>
+          <div class="mobile-field-value">{{ formatDate(comprobante.fechahasta) }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">Nov. Contractual</div>
+          <div class="mobile-field-value">{{ comprobante.nov_contractual }}</div>
+        </div>
+        <div class="mobile-field">
+          <div class="mobile-field-label">UUID Designer</div>
+          <div class="mobile-field-value">{{ comprobante.uuid_designer || '-' }}</div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+<div class="pagination-table-container">
+  <!-- Paginación -->
+  @if (comprobantes().length > 0) {
+    <app-pagination
+      [currentPage]="currentPage()"
+      [firstPageUrl]="firstPageUrl()"
+      [nextPageUrl]="nextPageUrl()"
+      [prevPageUrl]="prevPageUrl()"
+      [isLoading]="isLoading()"
+      (firstPage)="goToFirstPage()"
+      (nextPage)="goToNextPage()"
+      (prevPage)="goToPrevPage()">
+    </app-pagination>
+  }
+</div>
+
+<!-- Modal para editar CUNE -->
+<app-cune-modal
+  [isOpen]="showCuneModal()"
+  [comprobante]="selectedComprobanteForCune()"
+  (close)="onCloseCuneModal()"
+  (save)="onSaveCune($event)">
+</app-cune-modal>

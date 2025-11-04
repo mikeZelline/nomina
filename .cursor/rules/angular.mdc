@@ -1,0 +1,23 @@
+---
+description: Rules for using modern Angular (v20+)
+globs: **/*.{ts,html}
+alwaysApply: true
+---
+
+- The project must use **Angular version 20 or newer**.
+
+- Do **not** use Angular 16 or older versions.
+
+- Always use **modern Angular features**, such as:
+  - `@if`, `@for`, `@switch`
+  - `signals`, `computed`, `effect`
+  - Standalone components when appropriate
+
+- Avoid legacy or deprecated patterns:
+  - `*ngIf`, `*ngFor`
+  - Redundant `EventEmitter` or outdated `@Input/@Output`
+  - Deprecated APIs
+
+- Prefer `ChangeDetectionStrategy.OnPush` where possible.
+
+- Follow the **official Angular Style Guide** for code consistency.

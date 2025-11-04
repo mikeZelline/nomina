@@ -1,0 +1,30 @@
+---
+description: Logging and debugging rules
+globs: **/*.ts
+alwaysApply: true
+---
+
+- Each API endpoint implementation must have **exactly three logs**:
+
+  1. **Log the endpoint URL**
+     ```ts
+     console.log("Calling:", url);
+     ```
+
+  2. **Log the data being sent**
+     ```ts
+     console.log("Payload:", body);
+     ```
+
+  3. **Log the response received**
+     ```ts
+     console.log("Server response:", response);
+     ```
+
+- Do **not** add extra `console.log` statements by default in components, services, or modules.
+
+- Only include additional logs if explicitly requested in a prompt or task.
+
+- Logs must be **clear and minimal**, avoiding console clutter.
+
+- Remove all debug logs before production deployment.

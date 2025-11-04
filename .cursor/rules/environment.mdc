@@ -1,0 +1,30 @@
+---
+description: Rules for environment variables and global configuration
+globs: **/*.{ts}
+alwaysApply: true
+---
+
+- The project must include a dedicated **environment configuration file**, for example: src/environments/environment.ts
+
+- Any value that is **global or environment-dependent** must be defined in this file, such as:
+- Base API URL  
+- Server IP or domain  
+- Global tokens or API keys  
+- Timeout or retry configurations  
+- Environment flags (`production`, `development`, etc.)
+
+- Example:
+```ts
+export const environment = {
+  production: false,
+  apiBaseUrl: 'https://api.myapp.com',
+  serverIp: '127.0.0.1',
+};
+```
+- In code, Cursor must always reference environment variables instead of hardcoding values:
+import { environment } from '@environments/environment';
+const url = `${environment.apiBaseUrl}/users`;
+
+- Hardcoded values in services or components are not allowed.
+
+- If Cursor detects a repeated or environment-dependent value, it must automatically move it into the environment file.

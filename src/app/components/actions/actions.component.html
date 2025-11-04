@@ -1,0 +1,37 @@
+<div class="actions-section">  
+
+  <div class="summary-section">
+    <div class="summary-text">
+      <span>Total Empleados Procesados</span>
+      <span class="total-count">{{ totalProcesados() }}</span>
+    </div>
+  </div>
+
+  <div class="main-actions">
+    <button class="btn-danger btn-50" (click)="onEliminarComprobante()">Eliminar Comprobante</button>
+    <button class="btn-primary btn-50" (click)="onProcesar()">Procesar</button>    
+  </div>
+
+  <div class="final-actions">
+    <button class="btn-secondary btn-100" (click)="onGeneracionArchivos()">Generación Archivos</button>
+    <button class="btn-secondary btn-100" (click)="onCargueCune()">Cargue CUNE</button>
+    <button class="btn-primary btn-50" (click)="onAceptar()">Aceptar</button>
+    <button class="btn-secondary btn-50" (click)="onCancelar()">Cancelar</button>
+  </div>
+  <!--
+  <div class="final-actions">
+    <div class="final-actions-row">
+      <button class="btn-secondary" (click)="onGeneracionArchivos()">Generación Archivos</button>
+    </div>
+    <div class="final-actions-col">
+      <div class="final-actions-row">
+        <button class="btn-secondary" (click)="onCargueCune()">Cargue CUNE</button>
+      </div>
+      <div class="final-actions-rows">
+        <button class="btn-primary" (click)="onAceptar()">Aceptar</button>
+        <button class="btn-secondary" (click)="onCancelar()">Cancelar</button>
+      </div>      
+    </div>
+  </div>
+  -->
+</div>

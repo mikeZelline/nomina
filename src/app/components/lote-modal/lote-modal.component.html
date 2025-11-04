@@ -1,0 +1,99 @@
+<app-modal 
+  [isOpen]="isOpen()" 
+  [title]="title()"
+  [size]="size()"
+  (close)="onClose()">
+  
+  <div class="lote-form">
+    <div class="form-row">
+       <div class="form-group">
+         <label for="ano">Año</label>
+         <input 
+           type="number" 
+           id="ano"
+           [value]="yearValue"
+           (input)="onYearChange($any($event.target).value)"
+           class="form-input"
+           placeholder="1990-2050"
+           min="1990"
+           max="2050"
+           step="1"
+           required>
+       </div>
+       
+       <div class="form-group">
+         <label for="mes">Mes</label>
+         <select 
+           id="mes"
+           [(ngModel)]="formulario.mes"
+           class="form-select"
+           required>
+           <option [value]="null">Seleccionar mes</option>
+           @for (mes of meses; track mes.value) {
+             <option [value]="mes.value">{{ mes.label }}</option>
+           }
+         </select>
+       </div>
+
+      <div class="form-group">
+        <label for="sucursalpila">Sucursal Pila</label>
+        <input 
+          type="text" 
+          id="sucursalpila"
+          [(ngModel)]="formulario.sucursalpila"
+          class="form-input">
+      </div>
+    </div>
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label for="accion">Procedimiento</label>
+        <select 
+          id="accion"
+          [(ngModel)]="formulario.accion"
+          class="form-select">
+          @for (procedimiento of procedimientos; track procedimiento) {
+            <option [value]="procedimiento.value">{{ procedimiento.label }}</option>
+          }
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="candado">Enviados</label>
+        <select 
+          id="candado"
+          [(ngModel)]="formulario.candado"
+          class="form-select">
+          @for (estado of estadosEnvio; track estado) {
+            <option [value]="estado.value">{{ estado.label }}</option>
+          }
+        </select>
+      </div>
+      @if (loteData()) {
+        <div class="form-group">
+          <label for="lote">Lote</label>
+          <input 
+            type="number" 
+            id="lote"
+            [value]="formulario.lote"
+            class="form-input"
+            readonly>
+        </div>
+      }
+    </div>
+
+    
+     <div class="form-actions">
+       <button class="btn btn-secondary" (click)="onClose()">Cancelar</button>
+       <button class="btn btn-primary" (click)="onSave()">Guardar</button>
+     </div>
+   </div>
+   
+   <!-- Toast notification -->
+   <app-toast 
+     [show]="toastService.show()"
+     [message]="toastService.message()"
+     [type]="toastService.type()"
+     [duration]="toastService.duration()">
+   </app-toast>
+ </app-modal>
+

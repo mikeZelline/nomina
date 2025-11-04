@@ -1,0 +1,38 @@
+<div class="nomina-container">
+  <app-header 
+    #headerComponent
+    [parametros]="parametros()"
+    (parametrosChange)="parametros.set($event)"
+    (logout)="onLogout()"
+    (profile)="onProfile()"
+    (comprobantesChange)="onComprobantesChange($event)"
+    (comprobantesPaginationChange)="onComprobantesPaginationChange($event)">
+  </app-header>
+
+  <div class="main-content">
+    <!-- Tabla de Comprobantes -->
+    <div class="table-section">
+      <h3>Comprobantes Nómina Electrónica DIAN - Interfaz INNAPSIS - ZIP</h3>
+      <app-comprobantes-table
+        #comprobantesTable
+        [comprobantes]="comprobantes()"
+        [selectedComprobante]="selectedComprobante()"
+        (comprobanteSelect)="onComprobanteSelect($event)"
+        (comprobantesChange)="onComprobantesChange($event)"
+        (filterChange)="onComprobantesFilterChange($event)">
+      </app-comprobantes-table>
+    </div>
+
+    <app-actions
+      [totalProcesados]="totalProcesados()"
+      (buscar)="onBuscar()"
+      (mostrarTodos)="onMostrarTodos()"
+      (eliminarComprobante)="onEliminarComprobante()"
+      (procesar)="onProcesar()"
+      (generacionArchivos)="onGeneracionArchivos()"
+      (cargueCune)="onCargueCune()"
+      (aceptar)="onAceptar()"
+      (cancelar)="onCancelar()">
+    </app-actions>
+  </div>
+</div>

@@ -1,0 +1,530 @@
+/* Desktop Table Container */
+.desktop-table-container {
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-400) var(--gray-100);
+}
+
+/* Mobile Table Container */
+.mobile-table-container {
+  display: none;
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: var(--gray-100);
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: var(--gray-400);
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-500);
+}
+
+.comprobantes-table {
+  width: 100%;
+  min-width: 3000px;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 11px;
+}
+
+.comprobantes-table thead {
+  background-color: var(--gray-100);
+}
+
+.comprobantes-table th {
+  padding: 12px 8px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--gray-700);
+  border-bottom: 2px solid var(--gray-200);
+  white-space: nowrap;
+  margin: 0;
+}
+
+.comprobantes-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--gray-200);
+  vertical-align: top;
+  margin: 0;
+}
+
+.comprobantes-table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.comprobantes-table tbody tr:hover {
+  background-color: var(--gray-50);
+}
+
+.comprobantes-table tbody tr.selected {
+  background-color: #eff6ff;
+  border-left: 3px solid var(--primary-color);
+}
+
+/* Clases específicas usadas en el HTML */
+.action-cell {
+  width: 40px;
+  text-align: center;
+}
+
+.row-action-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  font-size: 16px;
+  color: var(--gray-500);
+}
+
+.row-action-button:hover {
+  background-color: var(--gray-100);
+}
+
+.code-cell {
+  font-family: monospace;
+  font-weight: 500;
+}
+
+.name-cell {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cune-cell {
+  font-family: monospace;
+}
+
+
+.cune-input {
+  width: 80px;
+  padding: 4px 8px;
+  border: 1px solid var(--gray-300);
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 11px;
+  background-color: var(--white);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.cune-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.mobile-cune-input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--gray-300);
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 11px;
+  background-color: var(--white);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.mobile-cune-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.comprobante-number-cell {
+  font-family: monospace;
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+.marcacion-cell .status-enviado {
+  background-color: var(--success-color);
+  color: var(--white);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.marcacion-cell .status-rechazado {
+  background-color: var(--danger-color);
+  color: var(--white);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.amount-cell {
+  text-align: right;
+  font-family: monospace;
+  font-weight: 500;
+}
+
+.number-cell {
+  text-align: center;
+  font-weight: 500;
+}
+
+.text-cell {
+  font-size: 10px;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.date-cell {
+  font-size: 10px;
+  font-family: monospace;
+  color: var(--gray-600);
+  min-width: 80px;
+}
+
+/* Mobile Styles */
+.mobile-header {
+  display: flex;
+  background-color: var(--gray-100);
+  border-bottom: 2px solid var(--gray-200);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.mobile-header-cell {
+  padding: 12px 8px;
+  font-weight: 600;
+  color: var(--gray-700);
+  border-right: 1px solid var(--gray-200);
+  font-size: 11px;
+}
+
+.mobile-sticky-col-1 {
+  width: 40px;
+  min-width: 40px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.mobile-sticky-col-2 {
+  width: 33.33%;
+  flex-shrink: 0;
+}
+
+.mobile-sticky-col-3 {
+  width: calc(66.66% - 40px);
+  flex-shrink: 0;
+}
+
+.mobile-filter-btn {
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-filter-row {
+  display: flex;
+  background-color: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.mobile-filter-cell {
+  padding: 8px;
+  border-right: 1px solid var(--gray-200);
+}
+
+.mobile-filter-cell.mobile-sticky-col-1 {
+  width: 40px;
+  min-width: 40px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.mobile-filter-cell.mobile-sticky-col-2 {
+  width: 33.33%;
+  flex-shrink: 0;
+}
+
+.mobile-filter-cell.mobile-sticky-col-3 {
+  width: calc(66.66% - 40px);
+  flex-shrink: 0;
+}
+
+.mobile-row {
+  border-bottom: 1px solid var(--gray-200);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.mobile-row:hover {
+  background-color: var(--gray-50);
+}
+
+.mobile-row.selected {
+  background-color: #eff6ff;
+  border-left: 3px solid var(--primary-color);
+}
+
+.mobile-static-row {
+  display: flex;
+  border-bottom: 2px solid var(--gray-200);
+}
+
+.mobile-static-cell {
+  padding: 10px 8px;
+  border-right: 1px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+}
+
+.mobile-scrollable-row {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-400) var(--gray-100);
+  padding: 8px 0;
+}
+
+.mobile-scrollable-row::-webkit-scrollbar {
+  height: 6px;
+}
+
+.mobile-scrollable-row::-webkit-scrollbar-track {
+  background: var(--gray-100);
+  border-radius: 4px;
+}
+
+.mobile-scrollable-row::-webkit-scrollbar-thumb {
+  background: var(--gray-400);
+  border-radius: 4px;
+}
+
+.mobile-scrollable-row::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-500);
+}
+
+.mobile-field {
+  flex: 0 0 auto;
+  min-width: 120px;
+  max-width: 200px;
+  padding-left: 10px;
+  border-radius: 4px;
+  background: var(--white);
+}
+
+.mobile-field-label {
+  font-size: 9px;
+  color: var(--gray-600);
+  margin-bottom: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mobile-field-value {
+  font-size: 11px;
+  color: var(--gray-900);
+  font-weight: 500;
+  word-break: break-word;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  /* Hide desktop table on mobile */
+  .desktop-table-container {
+    display: none !important;
+  }
+  
+  /* Show mobile div layout on mobile */
+  .mobile-table-container {
+    display: block !important;
+  }
+}
+
+/* Columnas fijas */
+.sticky-col-1 {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background-color: var(--gray-100);
+  width: 40px;
+  min-width: 40px;
+  max-width: 40px;
+  margin: 0;
+  padding: 0;
+}
+
+.sticky-col-2 {
+  position: sticky;
+  left: 40px;
+  z-index: 10;
+  background-color: var(--gray-100);
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
+  margin: 0;
+  padding: 0;
+}
+
+.sticky-col-3 {
+  position: sticky;
+  left: 160px;
+  z-index: 10;
+  background-color: var(--gray-100);
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  margin: 0;
+  padding: 0;
+}
+
+/* Forzar padding específico en columnas sticky */
+.comprobantes-table th.sticky-col-1,
+.comprobantes-table th.sticky-col-2,
+.comprobantes-table th.sticky-col-3 {
+  padding: 12px 8px !important;
+  margin: 0 !important;
+}
+
+.comprobantes-table td.sticky-col-1,
+.comprobantes-table td.sticky-col-2,
+.comprobantes-table td.sticky-col-3 {
+  padding: 10px 8px !important;
+  margin: 0 !important;
+}
+
+/* Fondos para celdas del cuerpo */
+.comprobantes-table tbody tr .sticky-col-1,
+.comprobantes-table tbody tr .sticky-col-2,
+.comprobantes-table tbody tr .sticky-col-3 {
+  background-color: var(--white);
+}
+
+.comprobantes-table tbody tr:hover .sticky-col-1,
+.comprobantes-table tbody tr:hover .sticky-col-2,
+.comprobantes-table tbody tr:hover .sticky-col-3 {
+  background-color: var(--gray-50);
+}
+
+.comprobantes-table tbody tr.selected .sticky-col-1,
+.comprobantes-table tbody tr.selected .sticky-col-2,
+.comprobantes-table tbody tr.selected .sticky-col-3 {
+  background-color: #eff6ff;
+}
+
+/* Desktop: Hide mobile layout */
+.desktop-only {
+  /* Styles only for desktop */
+}
+
+/* Mobile: Show mobile layout */
+@media (min-width: 769px) {
+  .mobile-table-container {
+    display: none !important;
+  }
+}
+
+/* Estilos para filtros */
+.header-row th {
+  background-color: var(--gray-100);
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--gray-900);
+  padding: 12px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--gray-200);
+  vertical-align: top;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.filter-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--gray-500);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-icon-btn:hover {
+  background-color: var(--gray-200);
+  color: var(--gray-700);
+}
+
+.filter-icon-btn.active {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.filter-row {
+  background-color: var(--white);
+}
+
+.filter-row.hidden {
+  display: none;
+}
+
+.filter-row td {
+  padding: 8px;
+  border-bottom: 1px solid var(--gray-200);
+  vertical-align: top;
+}
+
+/* Estilos sticky para celdas de filtros */
+.filter-row td.sticky-col-1,
+.filter-row td.sticky-col-2,
+.filter-row td.sticky-col-3 {
+  position: sticky;
+  z-index: 11;
+  background-color: var(--white);
+  padding: 8px !important;
+  margin: 0 !important;
+}
+
+.filter-row td.sticky-col-1 {
+  left: 0;
+  background-color: var(--white);
+}
+
+.filter-row td.sticky-col-2 {
+  left: 40px;
+  background-color: var(--white);
+}
+
+.filter-row td.sticky-col-3 {
+  left: 160px;
+  background-color: var(--white);
+}

@@ -1,0 +1,157 @@
+<div class="header-section">
+  
+  <div class="header-container">
+    <div class="header-title">
+      <h1>Interfase Nómina Electrónica</h1>
+    </div>
+    <div class="parametros-actions">
+      <div class="user-menu-container">
+        <button class="user-menu-button" (click)="toggleUserMenu()" title="Menú de Usuario">
+          <svg class="three-dots-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle class="dot circle1" cx="8" cy="3" r="2" fill="currentColor"/>
+            <circle class="dot circle2" cx="8" cy="8" r="2" fill="currentColor"/>
+            <circle class="dot circle3" cx="8" cy="13" r="2" fill="currentColor"/>
+          </svg>
+        </button>
+        @if (showUserMenu) {
+          <div class="user-menu-dropdown">
+            <div class="user-info">
+              <div class="user-name">{{ currentUser }}</div>
+              <div class="user-email">admin@nomina.com</div>
+            </div>
+            <div class="menu-divider"></div>
+            <button class="menu-item" (click)="onProfile()">
+              Mi Perfil
+            </button>
+            <button class="menu-item" (click)="onLogout()">
+              Cerrar Sesión
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+  
+
+  <div class="header-content">
+    <div class="company-info">
+      <div class="company-details">
+        <div class="company-item">
+          <span class="label">Empresa:</span>
+          <div class="company-name-container">
+            <span 
+              class="value company-name" 
+              tabindex="0"
+              (click)="openEmpresasModal()"
+              (focus)="onCompanyFocus()"
+              (blur)="onCompanyBlur()"
+              [title]="'Usa ↑↓ para navegar entre empresas'">
+              {{ currentEmpresa()?.nombre || 'Cargando...' }}
+            </span>
+          </div>
+        </div>
+        <div class="company-item">
+          <span class="label">Nit:</span>
+          <span class="value company-nit">{{ currentEmpresa()?.nit || 'Cargando...' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="parametros-section">
+      <div class="parametros-header">
+        <h3>Parámetros Nómina Electrónica DIAN</h3>
+      </div>
+      
+      <app-lotes-rows 
+        [lotes]="lotes()"
+        (filterChange)="onLotesFilterChange($event)"
+        (actionCrear)="openLoteModal()"
+        (actionClonar)="onClonarLote($event)"
+        (actionEliminar)="onEliminarLote($event)"
+        (candadoChange)="onCandadoChange($event)">
+      </app-lotes-rows>
+      
+      <!-- Botón crear y Paginación para lotes -->
+      <div class="lotes-footer-actions">        
+        @if (lotes().length > 0) {
+          <button class="btn-primary" (click)="openLoteModal()" title="Crear nuevo lote">
+            Nuevo Lote
+          </button>
+          <div class="pagination-lotes-container">
+            <app-pagination
+              [currentPage]="getLotesCurrentPage()"
+              [firstPageUrl]="getLotesFirstPageUrl()"
+              [nextPageUrl]="getLotesNextPageUrl()"
+              [prevPageUrl]="getLotesPrevPageUrl()"
+              [isLoading]="false"
+              (firstPage)="goToLotesFirstPage()"
+              (nextPage)="goToLotesNextPage()"
+              (prevPage)="goToLotesPrevPage()">
+            </app-pagination>
+          </div>
+        }
+      </div>
+    </div>    
+  </div>
+  
+  <!-- Modal de empresas -->
+  <app-empresas-modal 
+    [isOpen]="showEmpresasModal"
+    (close)="closeEmpresasModal()"
+    (empresaSelect)="onEmpresaSelect($event)">
+  </app-empresas-modal>
+  
+  <!-- Modal de lotes -->
+  <app-lote-modal 
+    [isOpen]="showLoteModal"
+    [loteData]="loteSeleccionado"
+    [title]="loteSeleccionado ? 'Editar Lote' : 'Crear Nuevo Lote'"
+    (close)="closeLoteModal()"
+    (save)="onSaveLote($event)">
+  </app-lote-modal>
+  
+    <!-- Modal de confirmación para eliminar lote -->
+  <app-confirmation
+    [isOpen]="showConfirmationModal"
+    title="Eliminar Lote"
+    message="¿Estás seguro de que deseas eliminar este lote? Esta acción no se puede deshacer."
+    confirmText="Eliminar"
+    cancelText="Cancelar"
+    type="danger"
+    (confirm)="onConfirmDelete()"
+    (cancel)="onCancelDelete()">
+  </app-confirmation>
+  
+  <!-- Primer modal de confirmación para cambio de candado -->
+  <app-confirmation
+    [isOpen]="showFirstCandadoConfirmation"
+    title="Confirmar cambio"
+    [message]="getFirstCandadoMessage()"
+    confirmText="Confirmar"
+    cancelText="Cancelar"
+    type="warning"
+    (confirm)="onConfirmFirstCandado()"
+    (cancel)="onCancelFirstCandado()">
+  </app-confirmation>
+  
+  <!-- Segundo modal de confirmación para cambio de candado -->
+  <app-confirmation
+    [isOpen]="showSecondCandadoConfirmation"
+    title="Confirmar cambio"
+    [message]="getSecondCandadoMessage()"
+    confirmText="Confirmar"
+    cancelText="Cancelar"
+    type="danger"
+    (confirm)="onConfirmSecondCandado()"
+    (cancel)="onCancelSecondCandado()">
+  </app-confirmation>
+  
+  <!-- Toast notification -->
+  <app-toast
+    [show]="toastService.show()"
+    [message]="toastService.message()"
+    [type]="toastService.type()"
+    [duration]="toastService.duration()">
+  </app-toast>
+
+</div>

@@ -1,0 +1,21 @@
+---
+description: CSS rules and styling conventions (no frameworks)
+globs: **/*.css
+alwaysApply: true
+---
+
+- Do **not** use CSS frameworks such as **Tailwind**, **Bootstrap**, or others.  
+  Only **pure CSS** is allowed.
+
+- Reuse existing classes before creating new ones.  
+  - If a class already exists in the global stylesheet, use it.  
+  - If it doesn’t exist, create a new reusable class and document it for future use.
+
+- All colors must come from variables defined in `:root`.  
+
+- Prefer global styles when they can be reused across modules.
+- Only create local styles if they are specific to a single module or component.
+
+- Do not use !important unless it is strictly necessary and justified.
+
+- Maintain a clean and consistent class structure. Avoid duplication and unclear naming.

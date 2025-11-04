@@ -1,0 +1,45 @@
+<div class="pagination-container">
+  <div class="pagination-info">
+    <span>Página {{ currentPage() }}</span>
+    @if (isLoading()) {
+      <span class="loading-indicator">Cargando...</span>
+    }
+  </div>
+  <div class="pagination-controls">
+    <button 
+      class="pagination-button" 
+      [disabled]="!canGoPrev() || isLoading()"
+      (click)="onPrevPage()"
+      title="Página anterior">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15,18 9,12 15,6"></polyline>
+      </svg>
+      Anterior
+    </button>
+    
+    @if (showFirstButton()) {
+      <button 
+        class="pagination-button first-page" 
+        [disabled]="currentPage() === 1 || isLoading()"
+        (click)="onFirstPage()"
+        title="Primera página">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="11,17 6,12 11,7"></polyline>
+          <polyline points="18,17 13,12 18,7"></polyline>
+        </svg>
+        Primera
+      </button>
+    }
+    
+    <button 
+      class="pagination-button" 
+      [disabled]="!canGoNext() || isLoading()"
+      (click)="onNextPage()"
+      title="Página siguiente">
+      Siguiente
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9,18 15,12 9,6"></polyline>
+      </svg>
+    </button>
+  </div>
+</div>

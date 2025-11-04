@@ -1,0 +1,23 @@
+@if (isOpen()) {
+  <div class="confirmation-overlay" (click)="onCancel()">
+    <div class="confirmation-modal" (click)="$event.stopPropagation()" [class]="getTypeClass()">
+      <div class="confirmation-header">
+        <h3 class="confirmation-title">{{ title() }}</h3>
+      </div>
+      
+      <div class="confirmation-body">
+        <p class="confirmation-message">{{ message() }}</p>
+      </div>
+
+      <div class="confirmation-actions">
+        <button type="button" class="btn-cancel" (click)="onCancel()">
+          {{ cancelText() }}
+        </button>
+        <button type="button" class="btn-confirm" [class]="'btn-confirm-' + type()" (click)="onConfirm()">
+          {{ confirmText() }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+

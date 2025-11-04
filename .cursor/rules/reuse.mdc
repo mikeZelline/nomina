@@ -1,0 +1,18 @@
+---
+description: Rules for creating and reusing Angular components
+globs: **/*.{ts,html}
+alwaysApply: true
+---
+
+- Cursor must **always identify and create components** for any element or functionality that can be reused.
+
+- Reusable logic, layouts, or UI elements should be implemented as **shared or standalone components**, not duplicated in multiple modules.
+
+- When creating new features, Cursor should:
+  1. Check if a similar component already exists in the project.
+  2. Reuse or extend the existing component instead of creating a new one.
+  3. Only create a new component if no reusable version exists.
+
+- All components should be designed to be **configurable and independent**, allowing reuse across different modules without modification.
+
+- Avoid code duplication — any repeating structure, logic, or style should be refactored into a reusable component or service.
