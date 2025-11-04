@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: nomina-app
+    container_name: nomina-frontend
     ports:
       - "8080:80"
     restart: unless-stopped
