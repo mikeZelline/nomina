@@ -5,9 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: nomina-frontend
+    container_name: nomina-app
     ports:
-      - "8081:80"
+      - "8080:80"
     restart: unless-stopped
     environment:
       - NGINX_HOST=localhost
