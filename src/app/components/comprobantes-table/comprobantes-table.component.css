@@ -528,3 +528,13 @@
   left: 160px;
   background-color: var(--white);
 }
+
+/* Estilos para el contenedor de paginación */
+.pagination-table-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 15px;
+  border-top: 1px solid var(--gray-200);
+  margin-top: 20px;
+}

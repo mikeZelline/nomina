@@ -16,6 +16,7 @@ export class ActionsComponent {
   mostrarTodos = output<void>();
   eliminarComprobante = output<void>();
   procesar = output<void>();
+  exportExcel = output<void>();
   generacionArchivos = output<void>();
   cargueCune = output<void>();
   aceptar = output<void>();
@@ -35,6 +36,10 @@ export class ActionsComponent {
 
   onProcesar(): void {
     this.procesar.emit();
+  }
+
+  onExportExcel(): void {
+    this.exportExcel.emit();
   }
 
   onGeneracionArchivos(): void {

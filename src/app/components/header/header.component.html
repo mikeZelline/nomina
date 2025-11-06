@@ -74,9 +74,19 @@
       <!-- Botón crear y Paginación para lotes -->
       <div class="lotes-footer-actions">        
         @if (lotes().length > 0) {
-          <button class="btn-primary" (click)="openLoteModal()" title="Crear nuevo lote">
-            Nuevo Lote
-          </button>
+          <div class="lotes-buttons">
+            <button class="btn-primary" (click)="openLoteModal()" title="Crear nuevo lote">
+              Nuevo Lote
+            </button>
+            <button class="btn-secondary" (click)="exportLotesToExcel()" title="Descargar lotes en Excel">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Descargar Excel
+            </button>
+          </div>
           <div class="pagination-lotes-container">
             <app-pagination
               [currentPage]="getLotesCurrentPage()"

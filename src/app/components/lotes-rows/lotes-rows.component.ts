@@ -1,4 +1,4 @@
-import { Component, input, output, signal } from '@angular/core';
+import { Component, input, output, signal, ViewChild, ElementRef, AfterViewInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Lote } from '@shared/models/lote.interface';
@@ -11,8 +11,11 @@ import { FilterInputComponent } from '@app/components/filter-input/filter-input.
   templateUrl: './lotes-rows.component.html',
   styleUrl: './lotes-rows.component.css'
 })
-export class LotesRowsComponent {
+export class LotesRowsComponent implements AfterViewInit {
   lotes = input.required<Lote[]>();
+  
+  @ViewChild('createButton', { read: ElementRef }) createButtonRef?: ElementRef<HTMLButtonElement>;
+  @ViewChild('tableContainer', { read: ElementRef }) tableContainerRef?: ElementRef<HTMLDivElement>;
   
   // Outputs para comunicar filtros al componente padre
   filterChange = output<{ano?: number, mes?: number}>();
@@ -154,5 +157,51 @@ export class LotesRowsComponent {
 
   onEliminar(lote: Lote): void {
     this.actionEliminar.emit(lote);
+  }
+
+  constructor() {
+    // Effect para hacer scroll automático cuando no hay lotes
+    effect(() => {
+      const lotesCount = this.lotes().length;
+      // Esperar a que las referencias estén disponibles
+      if (lotesCount === 0) {
+        setTimeout(() => {
+          if (this.createButtonRef && this.tableContainerRef) {
+            this.scrollToCreateButton();
+          }
+        }, 150);
+      }
+    });
+  }
+
+  ngAfterViewInit(): void {
+    // Si no hay lotes al cargar el componente, hacer scroll
+    if (this.lotes().length === 0) {
+      setTimeout(() => {
+        this.scrollToCreateButton();
+      }, 150);
+    }
+  }
+
+  private scrollToCreateButton(): void {
+    if (!this.createButtonRef?.nativeElement || !this.tableContainerRef?.nativeElement) {
+      return;
+    }
+
+    const button = this.createButtonRef.nativeElement;
+    const container = this.tableContainerRef.nativeElement;
+    
+    // Calcular la posición del botón relativa al contenedor
+    const buttonRect = button.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    
+    // Calcular el scroll necesario para centrar el botón horizontalmente
+    const scrollLeft = buttonRect.left - containerRect.left + container.scrollLeft - (containerRect.width / 2) + (buttonRect.width / 2);
+    
+    // Hacer scroll suave al botón
+    container.scrollTo({
+      left: Math.max(0, scrollLeft),
+      behavior: 'smooth'
+    });
   }
 }

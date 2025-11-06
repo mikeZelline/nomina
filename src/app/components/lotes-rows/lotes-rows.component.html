@@ -1,4 +1,4 @@
-<div class="parametros-table">
+<div class="parametros-table" #tableContainer>
   <table>
     <thead>
       <!-- Primera fila: Títulos de columnas con iconos de filtro -->
@@ -248,7 +248,7 @@
           <td colspan="8" class="no-data">
             <div class="no-data-content">
               <p class="no-data-message">No hay lotes disponibles para esta empresa.</p>
-              <button class="create-link-btn" (click)="onCrear()" type="button">
+              <button #createButton class="create-link-btn" (click)="onCrear()" type="button">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19"></line>
                   <line x1="5" y1="12" x2="19" y2="12"></line>

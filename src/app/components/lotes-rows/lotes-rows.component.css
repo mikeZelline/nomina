@@ -271,29 +271,6 @@
   width: 100%;
 }
 
-.header-row th:nth-child(1),
-.filter-row td:nth-child(1) { width: 10%; }
-
-.header-row th:nth-child(2),
-.filter-row td:nth-child(2) { width: 12%; }
-
-.header-row th:nth-child(3),
-.filter-row td:nth-child(3) { width: 13%; }
-
-.header-row th:nth-child(4),
-.filter-row td:nth-child(4) { width: 13%; }
-
-.header-row th:nth-child(5),
-.filter-row td:nth-child(5) { width: 12%; }
-
-.header-row th:nth-child(6),
-.filter-row td:nth-child(6) { width: 10%; }
-
-.header-row th:nth-child(7),
-.filter-row td:nth-child(7) { width: 10%; }
-
-.header-row th:nth-child(8),
-.filter-row td:nth-child(8) { width: 10%; }
 
 /* Estilos para botones de acción */
 .actions-container {
@@ -362,7 +339,7 @@
   .filter-input,
   .filter-select {
     font-size: 12px;
-    padding: 8px 10px;
+    padding: 6px 10px;
     min-width: 90px;
   }
   
@@ -393,29 +370,8 @@
   }
   
   /* Ajustar anchos de columnas en móvil */
-  .header-row th:nth-child(1),
-  .filter-row td:nth-child(1) { width: 15%; }
+  .header-row, .filter-row { width: 60px; }
   
-  .header-row th:nth-child(2),
-  .filter-row td:nth-child(2) { width: 15%; }
-  
-  .header-row th:nth-child(3),
-  .filter-row td:nth-child(3) { width: 15%; }
-  
-  .header-row th:nth-child(4),
-  .filter-row td:nth-child(4) { width: 15%; }
-  
-  .header-row th:nth-child(5),
-  .filter-row td:nth-child(5) { width: 12%; }
-  
-  .header-row th:nth-child(6),
-  .filter-row td:nth-child(6) { width: 10%; }
-  
-  .header-row th:nth-child(7),
-  .filter-row td:nth-child(7) { width: 8%; }
-  
-  .header-row th:nth-child(8),
-  .filter-row td:nth-child(8) { width: 10%; }
   
   /* Asegurar que inputs y selects tengan el ancho correcto */
   .param-input,

@@ -19,6 +19,9 @@
 .main-actions button {
   min-width: 140px;
   font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .summary-section {
@@ -92,6 +95,10 @@
 @media (max-width: 768px) {
   .btn-secondary, .btn-danger, .btn-primary {
     width: 48%;
+  }
+
+  .main-actions{
+    width: 100%;
   }
 
   .main-actions button{

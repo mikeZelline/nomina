@@ -16,6 +16,7 @@ import { ToastService } from '@shared/services/toast.service';
 import { ToastComponent } from '@app/components/toast/toast.component';
 import { LoaderService } from '@shared/services/loader.service';
 import { ConfirmationComponent } from '@app/components/confirmation/confirmation.component';
+import * as XLSX from 'xlsx-js-style';
 
 interface ComprobantesPaginationInfo {
   secuencia: number;
@@ -40,6 +41,7 @@ export class HeaderComponent implements OnInit {
   comprobantesChange = output<ComprobanteDian[]>();
   comprobantesPaginationChange = output<ComprobantesPaginationInfo>();
   comprobantesFilterChange = output<{codigoempleado?: string, nombre?: string}>();
+  exportComprobantes = output<void>();
   
   // Lotes para mostrar en filas
   lotes = signal<Lote[]>([]);
@@ -621,5 +623,422 @@ export class HeaderComponent implements OnInit {
   closeConfirmationModal(): void {
     this.showConfirmationModal = false;
     this.loteToDelete = null;
+  }
+
+  // Método para exportar lotes a Excel (todas las páginas)
+  exportLotesToExcel(): void {
+    const currentEmpresa = this.currentEmpresa();
+    if (!currentEmpresa) {
+      this.toastService.warning('No hay empresa seleccionada');
+      return;
+    }
+
+    // Mostrar mensaje de carga
+    this.toastService.info('Cargando todos los lotes...');
+    this.loaderService.show();
+
+    // Obtener la URL de la primera página o construirla
+    const firstPageUrl = this.lotesFirstPageUrl();
+    let initialUrl: string;
+
+    if (firstPageUrl) {
+      // Usar la URL de la primera página guardada
+      initialUrl = firstPageUrl;
+    } else {
+      // Si no hay URL guardada, obtener la primera página con los filtros actuales
+      this.lotesService.getLotesByEmpresa(
+        currentEmpresa.secuencia,
+        this.lotesAnoFilter || undefined,
+        this.lotesMesFilter || undefined
+      ).subscribe({
+        next: (response) => {
+          // Guardar la URL de la primera página
+          this.lotesFirstPageUrl.set(response.first.$ref);
+          // Iniciar la obtención de todas las páginas
+          this.getAllLotesForExport(response.first.$ref);
+        },
+        error: (error) => {
+          this.loaderService.hide();
+          console.error('Error obteniendo primera página:', error);
+          this.toastService.error('Error al obtener los lotes. Por favor, intente nuevamente.');
+        }
+      });
+      return;
+    }
+
+    // Si ya tenemos la URL inicial, obtener todos los lotes
+    this.getAllLotesForExport(initialUrl);
+  }
+
+  // Método auxiliar para obtener todos los lotes de todas las páginas
+  private getAllLotesForExport(initialUrl: string): void {
+    // Función recursiva para obtener todas las páginas
+    const getAllLotes = (url: string, allLotes: Lote[] = []): Promise<Lote[]> => {
+      return new Promise((resolve, reject) => {
+        this.lotesService.getLotesByUrl(url).subscribe({
+          next: (response) => {
+            // Agregar los lotes de esta página
+            const updatedLotes = [...allLotes, ...response.items];
+            
+            // Si hay siguiente página, continuar
+            if (response.next?.$ref) {
+              getAllLotes(response.next.$ref, updatedLotes)
+                .then(resolve)
+                .catch(reject);
+            } else {
+              // No hay más páginas, retornar todos los lotes
+              resolve(updatedLotes);
+            }
+          },
+          error: (error) => {
+            console.error('Error cargando lotes para exportación:', error);
+            reject(error);
+          }
+        });
+      });
+    };
+
+    // Obtener todos los lotes
+    getAllLotes(initialUrl)
+      .then((allLotes: Lote[]) => {
+        this.loaderService.hide();
+
+        if (allLotes.length === 0) {
+          this.toastService.warning('No hay lotes para exportar');
+          return;
+        }
+
+        const currentEmpresa = this.currentEmpresa();
+        if (!currentEmpresa) {
+          return;
+        }
+
+        // Obtener el nombre de la empresa
+        const empresaNombre = currentEmpresa.nombre || 'Empresa';
+
+        // Mapear los lotes a formato Excel con nombres de columnas legibles
+        // Excluir: Secuencia, Sucursal Pila, Notas, Tracking ID, Token
+        // Reemplazar Empresa con el nombre de la empresa
+        const excelData = allLotes.map(lote => ({
+          'Empresa': empresaNombre,
+          'Año': lote.ano,
+          'Mes': lote.mes_nombre.toUpperCase(),
+          'Lote': lote.lote,
+          'Consecutivo': lote.consecutivo,
+          'Enviado': lote.ajuste === 'S' ? 'Enviado' : 'Cancelado',
+          'Fecha Envío': lote.fechaenvio,
+          'Acción': this.getProcedimiento(lote.accion),
+          'Candado': lote.candado === 'S' ? 'Enviado' : 'Cancelado'
+        }));
+
+        // Crear workbook y worksheet
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Lotes');
+
+        // Definir anchos de columnas (sin las columnas eliminadas)
+        const columnWidths = [
+          { wch: 25 }, // Empresa (nombre completo)
+          { wch: 6 },  // Año
+          { wch: 12 }, // Mes
+          { wch: 8 },  // Lote
+          { wch: 12 }, // Consecutivo
+          { wch: 12 }, // Enviado
+          { wch: 25 }, // Fecha Envío (más ancho para evitar que aumente el alto)
+          { wch: 18 }, // Acción
+          { wch: 12 }  // Candado
+        ];
+        worksheet['!cols'] = columnWidths;
+
+        // Obtener el rango de celdas
+        const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
+        
+        // Aplicar formato a los encabezados (fila 1)
+        const headerStyle = {
+          fill: {
+            fgColor: { rgb: '4472C4' } // Azul
+          },
+          font: {
+            color: { rgb: 'FFFFFF' }, // Blanco
+            bold: true,
+            sz: 11
+          },
+          alignment: {
+            horizontal: 'center',
+            vertical: 'center',
+            wrapText: true
+          },
+          border: {
+            top: { style: 'thin', color: { rgb: 'FFFFFF' } },
+            bottom: { style: 'thin', color: { rgb: 'FFFFFF' } },
+            left: { style: 'thin', color: { rgb: 'FFFFFF' } },
+            right: { style: 'thin', color: { rgb: 'FFFFFF' } }
+          }
+        };
+
+        // Aplicar estilo a cada celda del encabezado
+        for (let col = range.s.c; col <= range.e.c; col++) {
+          const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+          if (!worksheet[cellAddress]) continue;
+          
+          worksheet[cellAddress].s = headerStyle;
+        }
+
+        // Aplicar formato a las celdas de datos
+        const dataStyle = {
+          alignment: {
+            vertical: 'center',
+            wrapText: true
+          },
+          border: {
+            top: { style: 'thin', color: { rgb: 'D0D0D0' } },
+            bottom: { style: 'thin', color: { rgb: 'D0D0D0' } },
+            left: { style: 'thin', color: { rgb: 'D0D0D0' } },
+            right: { style: 'thin', color: { rgb: 'D0D0D0' } }
+          }
+        };
+
+        // Aplicar estilo a las celdas de datos
+        for (let row = range.s.r + 1; row <= range.e.r; row++) {
+          for (let col = range.s.c; col <= range.e.c; col++) {
+            const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
+            if (!worksheet[cellAddress]) continue;
+            
+            worksheet[cellAddress].s = { ...dataStyle };
+          }
+        }
+
+        // Congelar la primera fila (encabezados)
+        worksheet['!freeze'] = { xSplit: 0, ySplit: 1, topLeftCell: 'A2', activePane: 'bottomLeft', state: 'frozen' };
+
+        // Generar nombre de archivo con fecha
+        const fecha = new Date().toISOString().split('T')[0];
+        const fileName = `Lotes_${empresaNombre}_${fecha}.xlsx`;
+
+        // Descargar el archivo
+        XLSX.writeFile(workbook, fileName);
+        
+        this.toastService.success(`Se exportaron ${allLotes.length} lotes exitosamente`);
+      })
+      .catch((error) => {
+        this.loaderService.hide();
+        console.error('Error exportando lotes:', error);
+        this.toastService.error('Error al exportar los lotes. Por favor, intente nuevamente.');
+      });
+  }
+
+  // Helper para obtener el nombre del procedimiento
+  private getProcedimiento(codigo: string): string {
+    const procedimientosMap: { [key: string]: string } = {
+      'NINM': 'Normal Mes',
+      'NIAM': 'Ajuste Modificación',
+      'NIAE': 'Ajuste Eliminación',
+      'NINC': 'Novedad Contractual',
+      'NINT': 'Normal Tardía',
+      'NINR': 'Normal Rechazado'
+    };
+    return procedimientosMap[codigo] || codigo;
+  }
+
+  // Método para exportar comprobantes a Excel (todas las páginas)
+  exportComprobantesToExcel(): void {
+    const currentEmpresa = this.currentEmpresa();
+    if (!currentEmpresa) {
+      this.toastService.warning('No hay empresa seleccionada');
+      return;
+    }
+
+    // Mostrar mensaje de carga
+    this.toastService.info('Cargando todos los comprobantes...');
+    this.loaderService.show();
+
+    // Obtener la URL inicial con los filtros actuales
+    this.comprobantesDianService.getComprobantesBySecuencia(
+      currentEmpresa.secuencia,
+      this.comprobantesCodigoEmpleadoFilter || undefined,
+      this.comprobantesNombreFilter || undefined
+    ).subscribe({
+      next: (response) => {
+        // Iniciar la obtención de todas las páginas
+        this.getAllComprobantesForExport(response.first.$ref, currentEmpresa);
+      },
+      error: (error) => {
+        this.loaderService.hide();
+        console.error('Error obteniendo primera página de comprobantes:', error);
+        this.toastService.error('Error al obtener los comprobantes. Por favor, intente nuevamente.');
+      }
+    });
+  }
+
+  // Método auxiliar para obtener todos los comprobantes de todas las páginas
+  private getAllComprobantesForExport(initialUrl: string, currentEmpresa: Empresa): void {
+    // Función recursiva para obtener todas las páginas
+    const getAllComprobantes = (url: string, allComprobantes: ComprobanteDian[] = []): Promise<ComprobanteDian[]> => {
+      return new Promise((resolve, reject) => {
+        this.comprobantesDianService.getComprobantesByUrl(url).subscribe({
+          next: (response) => {
+            // Agregar los comprobantes de esta página
+            const updatedComprobantes = [...allComprobantes, ...response.items];
+            
+            // Si hay siguiente página, continuar
+            if (response.next?.$ref) {
+              getAllComprobantes(response.next.$ref, updatedComprobantes)
+                .then(resolve)
+                .catch(reject);
+            } else {
+              // No hay más páginas, retornar todos los comprobantes
+              resolve(updatedComprobantes);
+            }
+          },
+          error: (error) => {
+            console.error('Error cargando comprobantes para exportación:', error);
+            reject(error);
+          }
+        });
+      });
+    };
+
+    // Obtener todos los comprobantes
+    getAllComprobantes(initialUrl)
+      .then((allComprobantes: ComprobanteDian[]) => {
+        this.loaderService.hide();
+
+        if (allComprobantes.length === 0) {
+          this.toastService.warning('No hay comprobantes para exportar');
+          return;
+        }
+
+        // Obtener el nombre de la empresa
+        const empresaNombre = currentEmpresa.nombre || 'Empresa';
+
+        // Mapear los comprobantes a formato Excel con nombres de columnas legibles
+        const excelData = allComprobantes.map(comp => ({
+          'Empresa': empresaNombre,
+          'Código Empleado': comp.empleado,
+          'Nombre Empleado': comp.nombre_empleado || '',
+          'Consecutivo': comp.consecutivo,
+          'Marcación': comp.marcacion,
+          'CUNE': comp.cune || '',
+          'Prefijo': comp.prefijo,
+          'Número Comprobante': comp.numerocomprobantedian,
+          'Fecha Pago': comp.fechapago,
+          'Devengado Total': comp.devengadototal,
+          'Deducido Total': comp.deducidototal,
+          'Redondeo Total': comp.redondeototal,
+          'Comprobante Total': comp.comprobantetotal,
+          'Sueldo Trabajado': comp.sueldotrabajado,
+          'Días Laborados': comp.diaslaborados,
+          'Auxilio Transporte': comp.aux_transporte,
+          'Fecha Desde': comp.fechadesde,
+          'Fecha Hasta': comp.fechahasta,
+          'Tracking ID': comp.tracking_id || '',
+          'Nov. Contractual': comp.nov_contractual || ''
+        }));
+
+        // Crear workbook y worksheet
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Comprobantes');
+
+        // Definir anchos de columnas
+        const columnWidths = [
+          { wch: 25 }, // Empresa
+          { wch: 15 }, // Código Empleado
+          { wch: 30 }, // Nombre Empleado
+          { wch: 12 }, // Consecutivo
+          { wch: 12 }, // Marcación
+          { wch: 20 }, // CUNE
+          { wch: 10 }, // Prefijo
+          { wch: 18 }, // Número Comprobante
+          { wch: 25 }, // Fecha Pago (más ancho para evitar que aumente el alto)
+          { wch: 15 }, // Devengado Total
+          { wch: 15 }, // Deducido Total
+          { wch: 15 }, // Redondeo Total
+          { wch: 18 }, // Comprobante Total
+          { wch: 15 }, // Sueldo Trabajado
+          { wch: 12 }, // Días Laborados
+          { wch: 15 }, // Auxilio Transporte
+          { wch: 15 }, // Fecha Desde
+          { wch: 15 }, // Fecha Hasta
+          { wch: 20 }, // Tracking ID
+          { wch: 15 }  // Nov. Contractual
+        ];
+        worksheet['!cols'] = columnWidths;
+
+        // Obtener el rango de celdas
+        const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
+        
+        // Aplicar formato a los encabezados (fila 1)
+        const headerStyle = {
+          fill: {
+            fgColor: { rgb: '4472C4' } // Azul
+          },
+          font: {
+            color: { rgb: 'FFFFFF' }, // Blanco
+            bold: true,
+            sz: 11
+          },
+          alignment: {
+            horizontal: 'center',
+            vertical: 'center',
+            wrapText: true
+          },
+          border: {
+            top: { style: 'thin', color: { rgb: 'FFFFFF' } },
+            bottom: { style: 'thin', color: { rgb: 'FFFFFF' } },
+            left: { style: 'thin', color: { rgb: 'FFFFFF' } },
+            right: { style: 'thin', color: { rgb: 'FFFFFF' } }
+          }
+        };
+
+        // Aplicar estilo a cada celda del encabezado
+        for (let col = range.s.c; col <= range.e.c; col++) {
+          const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+          if (!worksheet[cellAddress]) continue;
+          
+          worksheet[cellAddress].s = headerStyle;
+        }
+
+        // Aplicar formato a las celdas de datos
+        const dataStyle = {
+          alignment: {
+            vertical: 'center',
+            wrapText: true
+          },
+          border: {
+            top: { style: 'thin', color: { rgb: 'D0D0D0' } },
+            bottom: { style: 'thin', color: { rgb: 'D0D0D0' } },
+            left: { style: 'thin', color: { rgb: 'D0D0D0' } },
+            right: { style: 'thin', color: { rgb: 'D0D0D0' } }
+          }
+        };
+
+        // Aplicar estilo a las celdas de datos
+        for (let row = range.s.r + 1; row <= range.e.r; row++) {
+          for (let col = range.s.c; col <= range.e.c; col++) {
+            const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
+            if (!worksheet[cellAddress]) continue;
+            
+            worksheet[cellAddress].s = { ...dataStyle };
+          }
+        }
+
+        // Congelar la primera fila (encabezados)
+        worksheet['!freeze'] = { xSplit: 0, ySplit: 1, topLeftCell: 'A2', activePane: 'bottomLeft', state: 'frozen' };
+
+        // Generar nombre de archivo con fecha
+        const fecha = new Date().toISOString().split('T')[0];
+        const fileName = `Comprobantes_${empresaNombre}_${fecha}.xlsx`;
+
+        // Descargar el archivo
+        XLSX.writeFile(workbook, fileName);
+        
+        this.toastService.success(`Se exportaron ${allComprobantes.length} comprobantes exitosamente`);
+      })
+      .catch((error) => {
+        this.loaderService.hide();
+        console.error('Error exportando comprobantes:', error);
+        this.toastService.error('Error al exportar los comprobantes. Por favor, intente nuevamente.');
+      });
   }
 }

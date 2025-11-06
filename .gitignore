@@ -22,3 +22,7 @@ __pycache__/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Otros archivos
+docker-compose.yml
+Dockerfile

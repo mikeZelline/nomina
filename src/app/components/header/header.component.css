@@ -152,13 +152,38 @@
   align-items: center;
   justify-content: space-between;
   gap: 15px;
+  padding-top: 15px;
   border-top: 1px solid var(--gray-200);
 }
 
-.lotes-footer-actions .btn-primary {
+.lotes-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.lotes-footer-actions .btn-primary,
+.lotes-footer-actions .btn-secondary {
   padding: 10px 16px;
   min-width: 140px;
   font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.lotes-footer-actions .btn-secondary {
+  background-color: var(--gray-500);
+  color: var(--white);
+}
+
+.lotes-footer-actions .btn-secondary:hover {
+  background-color: var(--gray-600);
 }
 
 
@@ -356,7 +381,13 @@
     gap: 10px;
   }
 
-  .lotes-footer-actions .btn-primary {
+  .lotes-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .lotes-footer-actions .btn-primary,
+  .lotes-footer-actions .btn-secondary {
     width: 100%;
   }
 

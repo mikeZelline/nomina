@@ -140,6 +140,13 @@ export class NominaModule implements AfterViewInit {
     }
   }
 
+  onExportComprobantesExcel(): void {
+    // Llamar al método de exportación del HeaderComponent
+    if (this.headerComponentRef) {
+      this.headerComponentRef.exportComprobantesToExcel();
+    }
+  }
+
   onBuscar(): void {
     // Implementar búsqueda
   }
