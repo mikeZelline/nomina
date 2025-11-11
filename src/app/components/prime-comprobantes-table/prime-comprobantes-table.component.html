@@ -1,0 +1,258 @@
+<div class="prime-comprobantes-table-wrapper">
+  <p-table
+    #dt
+    class="prime-comprobantes-table-container"
+    [value]="comprobantes()"
+    dataKey="secuencia"
+    selectionMode="single"
+    [selection]="selectedComprobanteModel"
+    [loading]="loading() || isLoading()"
+    [scrollable]="isScrollable()"
+    [scrollHeight]="isScrollable() ? '410px' : ''"
+    styleClass="prime-comprobantes-table"
+    [tableStyle]="tableStyles()"
+    (onRowSelect)="onRowSelect($event)"
+    (onRowUnselect)="onRowUnselect($event)"
+    [expandedRowKeys]="expandedRows()"
+    (onRowExpand)="onRowExpand($event)"
+    (onRowCollapse)="onRowCollapse($event)"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="toggle-column" pFrozenColumn></th>
+        <th pSortableColumn="empleado" pFrozenColumn class="employee-column">
+          <div class="header-label">
+            <span class="header-title">Cód. empleado</span>
+            <p-sortIcon field="empleado"></p-sortIcon>
+            <span class="mobile-only secondary-label">Nombre empleado</span>
+          </div>
+        </th>
+        <th pSortableColumn="nombre_empleado" pFrozenColumn class="desktop-only">
+          Nombre empleado
+          <p-sortIcon field="nombre_empleado"></p-sortIcon>
+        </th>
+        <th pSortableColumn="cune" class="mobile-hidden">
+          CUNE
+          <p-sortIcon field="cune"></p-sortIcon>
+        </th>
+        <th pSortableColumn="numerocomprobantedian" class="mobile-hidden">
+          # Comprobante
+          <p-sortIcon field="numerocomprobantedian"></p-sortIcon>
+        </th>
+        <th pSortableColumn="marcacion" class="mobile-hidden">
+          Marcación
+          <p-sortIcon field="marcacion"></p-sortIcon>
+        </th>
+        <th pSortableColumn="devengadototal" class="mobile-hidden">
+          Devengado total
+          <p-sortIcon field="devengadototal"></p-sortIcon>
+        </th>
+        <th pSortableColumn="deducidototal" class="mobile-hidden">
+          Deducido total
+          <p-sortIcon field="deducidototal"></p-sortIcon>
+        </th>
+        <th pSortableColumn="comprobantetotal" class="mobile-hidden">
+          Comprob. total
+          <p-sortIcon field="comprobantetotal"></p-sortIcon>
+        </th>
+        <th pSortableColumn="diaslaborados" class="mobile-hidden">
+          Días L.
+          <p-sortIcon field="diaslaborados"></p-sortIcon>
+        </th>
+        <th pSortableColumn="sueldotrabajado" class="mobile-hidden">
+          Sueldo trabaj.
+          <p-sortIcon field="sueldotrabajado"></p-sortIcon>
+        </th>
+        <th pSortableColumn="tracking_id" class="mobile-hidden">
+          Tracking ID
+          <p-sortIcon field="tracking_id"></p-sortIcon>
+        </th>
+        <th pSortableColumn="fechadesde" class="mobile-hidden">
+          Fecha desde
+          <p-sortIcon field="fechadesde"></p-sortIcon>
+        </th>
+        <th pSortableColumn="fechahasta" class="mobile-hidden">
+          Fecha hasta
+          <p-sortIcon field="fechahasta"></p-sortIcon>
+        </th>
+        <th pSortableColumn="nov_contractual" class="mobile-hidden">
+          Nov. Contractual
+          <p-sortIcon field="nov_contractual"></p-sortIcon>
+        </th>
+      </tr>
+       @if (!showFilters() && comprobantes().length === 0) {
+         <tr class="filters-row hidden"></tr>
+       } @else {
+         <tr class="filters-row">
+          <th></th>
+          <th>
+            <div class="filter-stack">
+              <input
+                pInputText
+                type="text"
+                placeholder="Filtrar código..."
+                [value]="codigoEmpleadoFilter()"
+                (input)="onCodigoEmpleadoFilterInput($event)"
+              />
+              <input
+                class="mobile-only"
+                pInputText
+                type="text"
+                placeholder="Filtrar nombre..."
+                [value]="nombreEmpleadoFilter()"
+                (input)="onNombreEmpleadoFilterInput($event)"
+              />
+            </div>
+          </th>
+          <th class="desktop-only">
+            <input
+              pInputText
+              type="text"
+              placeholder="Filtrar nombre..."
+              [value]="nombreEmpleadoFilter()"
+              (input)="onNombreEmpleadoFilterInput($event)"
+            />
+          </th>
+          <th colspan="12"></th>
+        </tr>
+      }
+    </ng-template>
+
+    <ng-template #body pTemplate="body" let-comprobante let-expanded="expanded">
+      <tr
+        [pSelectableRow]="comprobante"
+        pRowExpansion
+        [class.row-highlight]="selectedComprobanteModel?.secuencia === comprobante.secuencia"
+      >
+        <td pFrozenColumn class="toggle-column">
+          <button
+            type="button"
+            pButton
+            pRipple
+            [pRowToggler]="comprobante"
+            [text]="true"
+            [rounded]="true"
+            severity="secondary"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+          ></button>
+        </td>
+        <td pFrozenColumn class="employee-column">
+          <div class="employee-info">
+            <span class="employee-code">{{ comprobante.empleado }}</span>
+            <span class="employee-name mobile-only">{{ comprobante.nombre_empleado }}</span>
+          </div>
+        </td>
+        <td pFrozenColumn class="desktop-only employee-name-column">{{ comprobante.nombre_empleado }}</td>
+        <td class="mobile-hidden">
+          <input
+            pInputText
+            type="text"
+            [value]="comprobante.cune || ''"
+            (click)="$event.stopPropagation()"
+            (dblclick)="onCuneDblClick(comprobante, $event)"
+            (blur)="onCuneChange(comprobante, $event)"
+          />
+        </td>
+        <td class="mobile-hidden">{{ comprobante.numerocomprobantedian }}</td>
+        <td class="mobile-hidden">
+          <span
+            class="status-pill"
+            [class.status-enviado]="comprobante.marcacion === 'ENVIADO'"
+            [class.status-rechazado]="comprobante.marcacion === 'RECHAZADO'"
+          >
+            {{ comprobante.marcacion }}
+          </span>
+        </td>
+        <td class="mobile-hidden">{{ formatCurrency(comprobante.devengadototal) }}</td>
+        <td class="mobile-hidden">{{ formatCurrency(comprobante.deducidototal) }}</td>
+        <td class="mobile-hidden">{{ formatCurrency(comprobante.comprobantetotal) }}</td>
+        <td class="mobile-hidden">{{ comprobante.diaslaborados }}</td>
+        <td class="mobile-hidden">{{ formatCurrency(comprobante.sueldotrabajado) }}</td>
+        <td class="mobile-hidden">{{ comprobante.tracking_id || '-' }}</td>
+        <td class="mobile-hidden">{{ formatDate(comprobante.fechadesde) }}</td>
+        <td class="mobile-hidden">{{ formatDate(comprobante.fechahasta) }}</td>
+        <td class="mobile-hidden">{{ comprobante.nov_contractual || '-' }}</td>
+      </tr>
+    </ng-template>
+
+    <ng-template #expandedrow pTemplate="rowexpansion" let-comprobante>
+      <tr class="row-expansion">
+        <td colspan="15">
+          <div class="expansion-grid">
+            <div class="expansion-item">
+              <span class="label">CUNE</span>
+              <span>{{ comprobante.cune || '-' }}</span>
+            </div>
+            <div class="expansion-item">
+              <span class="label"># Comprobante</span>
+              <span>{{ comprobante.numerocomprobantedian }}</span>
+            </div>
+            <div class="expansion-item">
+              <span class="label">Devengado total</span>
+              <span>{{ formatCurrency(comprobante.devengadototal) }}</span>
+            </div>
+            <div class="expansion-item">
+              <span class="label">Deducido total</span>
+              <span>{{ formatCurrency(comprobante.deducidototal) }}</span>
+            </div>
+            <div class="expansion-item">
+              <span class="label">Comprob. total</span>
+              <span>{{ formatCurrency(comprobante.comprobantetotal) }}</span>
+            </div>
+            <div class="expansion-item">
+              <span class="label">Días laborados</span>
+              <span>{{ comprobante.diaslaborados }}</span>
+            </div>
+            <div class="expansion-item">
+              <span class="label">Sueldo trabaj.</span>
+              <span>{{ formatCurrency(comprobante.sueldotrabajado) }}</span>
+            </div>
+            <div class="expansion-item">
+              <span class="label">Tracking ID</span>
+              <span>{{ comprobante.tracking_id || '-' }}</span>
+            </div>
+            <div class="expansion-item">
+              <span class="label">Fecha desde</span>
+              <span>{{ formatDate(comprobante.fechadesde) }}</span>
+            </div>
+            <div class="expansion-item">
+              <span class="label">Fecha hasta</span>
+              <span>{{ formatDate(comprobante.fechahasta) }}</span>
+            </div>
+            <div class="expansion-item">
+              <span class="label">Nov. Contractual</span>
+              <span>{{ comprobante.nov_contractual || '-' }}</span>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="15" class="empty-state">No hay comprobantes disponibles.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <div class="pagination-container" *ngIf="comprobantes().length > 0">
+    <app-pagination
+      [currentPage]="currentPage()"
+      [firstPageUrl]="firstPageUrl()"
+      [nextPageUrl]="nextPageUrl()"
+      [prevPageUrl]="prevPageUrl()"
+      [isLoading]="isLoading()"
+      (firstPage)="goToFirstPage()"
+      (nextPage)="goToNextPage()"
+      (prevPage)="goToPrevPage()"
+    ></app-pagination>
+  </div>
+
+  <app-cune-modal
+    [isOpen]="showCuneModal()"
+    [comprobante]="selectedComprobanteForCune()"
+    (close)="onCloseCuneModal()"
+    (save)="onSaveCune($event)"
+  ></app-cune-modal>
+</div>
+

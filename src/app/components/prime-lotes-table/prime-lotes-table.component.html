@@ -1,0 +1,159 @@
+<p-table
+  class="prime-lotes-table-container"
+  #dt
+  [value]="lotes()"
+  dataKey="secuencia"
+  [(selection)]="selectedLote"
+  selectionMode="single"
+  [loading]="loading()"
+  [paginator]="false"
+  [globalFilterFields]="['ano', 'mes_nombre', 'sucursalpila', 'accion', 'consecutivo', 'lote', 'candado']"
+  styleClass="prime-lotes-table"
+  [tableStyle]="{ width: '100%' }"
+  (onRowSelect)="onRowSelect($event)"
+  (onRowUnselect)="onRowUnselect($event)"
+  
+>
+
+  <ng-template 
+  style="width: 100%;"
+  #header>
+    <tr>
+      <th pSortableColumn="ano">Año <p-sortIcon field="ano"></p-sortIcon></th>
+      <th pSortableColumn="mes_nombre">Mes <p-sortIcon field="mes_nombre"></p-sortIcon></th>
+      <th pSortableColumn="sucursalpila">Sucursal Pila <p-sortIcon field="sucursalpila"></p-sortIcon></th>
+      <th pSortableColumn="accion">Procedimiento <p-sortIcon field="accion"></p-sortIcon></th>
+      <th pSortableColumn="consecutivo">Consecutivo <p-sortIcon field="consecutivo"></p-sortIcon></th>
+      <th class="column-lote" pSortableColumn="lote">Lote <p-sortIcon field="lote"></p-sortIcon></th>
+      <th pSortableColumn="candado">Enviado <p-sortIcon field="candado"></p-sortIcon></th>
+      <th class="actions-column">Acciones</th>
+    </tr>
+    @if (lotes().length > 0) {
+      <tr>
+        <th class="filter-ano">
+          <input
+            pInputText
+            type="number"
+            min="1950"
+            max="2100"
+            placeholder="Año"
+            [value]="anoFilterDisplay ?? ''"
+            (input)="onAnoFilterChange($event)"
+          />
+        </th>
+        <th class="filter-mes">
+          <select
+            [ngModel]="mesFilterDisplay ?? ''"
+            (ngModelChange)="onMesSelectChange($event)"
+          >
+            <option value="">Todos</option>
+            @for (option of mesOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </th>
+        <th>
+          <input
+            pInputText
+            type="text"
+            placeholder="Sucursal"
+          />
+        </th>
+        <th>
+          <input
+            pInputText
+            type="text"
+            placeholder="Procedimiento"
+          />
+        </th>
+        <th>
+          <input
+            pInputText
+            type="text"
+            placeholder="Consecutivo"
+          />
+        </th>
+        <th class="column-lote">
+          <input
+            pInputText
+            type="text"
+            placeholder="Lote"
+          />
+        </th>
+        <th>
+          <input
+            pInputText
+            type="text"
+            placeholder="Enviado"
+          />
+        </th>
+        <th></th>
+      </tr>
+    }
+  </ng-template>
+
+  <ng-template #body let-lote>
+    <tr [pSelectableRow]="lote">
+      <td>{{ lote.ano }}</td>
+      <td>{{ getMesFormateado(lote.mes_nombre) }}</td>
+      <td>{{ lote.sucursalpila || 'Sin sucursal' }}</td>
+      <td>{{ getProcedimiento(lote.accion) }}</td>
+      <td>{{ lote.consecutivo }}</td>
+      <td>{{ lote.lote }}</td>
+      <td>
+        <select [(ngModel)]="lote.candado" (ngModelChange)="onCandadoChange(lote, $event)">
+          <option value="S">Enviado</option>
+          <option value="N">Cancelado</option>
+        </select>
+      </td>
+      <td>
+        <div class="actions-container">
+          <button class="action-btn action-clone" type="button" (click)="onClonar(lote)" title="Clonar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+          <button class="action-btn action-delete" type="button" (click)="onEliminar(lote)" title="Eliminar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template #rowexpansion let-lote>
+    <tr>
+      <td colspan="9">
+        <div class="row-expansion">
+          <div><span class="label">Secuencia:</span> <span>{{ lote.secuencia }}</span></div>
+          <div><span class="label">Empresa:</span> <span>{{ lote.empresa }}</span></div>
+          <div><span class="label">Fecha envío:</span> <span>{{ lote.fechaenvio || 'Sin enviar' }}</span></div>
+          <div><span class="label">Notas:</span> <span>{{ lote.notas || 'Sin notas' }}</span></div>
+          <div><span class="label">Token:</span> <span>{{ lote.token || 'N/A' }}</span></div>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template #emptymessage>
+    <tr>
+      <td colspan="9">
+        <div class="empty-state">
+          <p class="empty-message">No hay lotes disponibles para esta empresa.</p>
+          <button type="button" class="create-link-btn" (click)="onCrear()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Crear uno nuevo
+          </button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+

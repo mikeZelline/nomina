@@ -1,14 +1,8 @@
-version: '3.8'
-
 services:
-  nomina:
+  nomina-app:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: nomina-app
     ports:
-      - "8081:80"
+      - "4200:80"
     restart: unless-stopped
-    environment:
-      - NGINX_HOST=localhost
-      - NGINX_PORT=80
+

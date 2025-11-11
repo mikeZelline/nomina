@@ -1,0 +1,179 @@
+
+:host ::ng-deep .prime-lotes-table-container {
+  width: 100%;
+}
+
+:host ::ng-deep .prime-lotes-table-container th.filter-ano {
+  width: 7rem;
+}
+
+:host ::ng-deep .prime-lotes-table-container th.filter-mes {
+  width: 10.5rem;
+}
+
+:host ::ng-deep .prime-lotes-table-container .p-datatable-table {
+  width: 100%;
+  table-layout: auto;
+}
+
+:host ::ng-deep .prime-lotes-table-container th.actions-column {
+  width: 6.5rem;
+}
+
+:host ::ng-deep .prime-lotes-table-container th.column-lote {
+  width: 7rem;
+}
+
+@media (max-width: 768px) {
+  :host ::ng-deep .prime-lotes-table-container thead tr:nth-child(2) th {
+    min-width: 9.5rem;
+    padding: 4px 6px;
+  }
+
+  :host ::ng-deep .prime-lotes-table-container thead tr:nth-child(2) input,
+  :host ::ng-deep .prime-lotes-table-container thead tr:nth-child(2) select {
+    font-size: 0.82rem;
+    padding: 0.4rem 0.6rem;
+  }
+}
+
+:host ::ng-deep .prime-lotes-table-container .p-inputtext,
+:host ::ng-deep .prime-lotes-table-container select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep .prime-lotes-table-container th,
+:host ::ng-deep .prime-lotes-table-container td {
+  white-space: normal;
+}
+
+.row-expansion {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--gray-50);
+  border-radius: var(--border-radius);
+}
+
+.row-expansion .label {
+  font-weight: 600;
+  color: var(--gray-700);
+  margin-right: 4px;
+}
+
+.actions-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.action-btn {
+  background: none;
+  border: 1px solid var(--gray-300);
+  border-radius: 4px;
+  padding: 6px 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: var(--gray-700);
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn.action-clone {
+  color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.action-btn.action-clone:hover {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.action-btn.action-delete {
+  color: var(--error-color);
+  border-color: var(--error-color);
+}
+
+.action-btn.action-delete:hover {
+  background-color: var(--error-color);
+  color: white;
+}
+
+:host ::ng-deep .prime-lotes-table-container .p-selectable-row {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+:host ::ng-deep .prime-lotes-table-container .p-selectable-row.p-highlight {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+:host ::ng-deep .prime-lotes-table-container .p-selectable-row.p-highlight .action-btn {
+  border-color: rgba(255, 255, 255, 0.6);
+  color: var(--white);
+  background: transparent;
+  box-shadow: none;
+}
+
+:host ::ng-deep .prime-lotes-table-container .p-selectable-row.p-highlight .action-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+:host ::ng-deep .prime-lotes-table-container .p-selectable-row.p-highlight a,
+:host ::ng-deep .prime-lotes-table-container .p-selectable-row.p-highlight button,
+:host ::ng-deep .prime-lotes-table-container .p-selectable-row.p-highlight select,
+:host ::ng-deep .prime-lotes-table-container .p-selectable-row.p-highlight span {
+  color: var(--white);
+}
+
+:host ::ng-deep .prime-lotes-table-container .p-selectable-row:hover {
+  background-color: rgba(30, 64, 175, 0.08);
+}
+
+.empty-message {
+  text-align: center;
+  padding: 24px;
+  font-weight: 500;
+  color: var(--gray-600);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 16px;
+}
+
+.empty-state .empty-message {
+  margin: 0;
+}
+
+.create-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--primary-color);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.create-link-btn:hover {
+  background: rgba(30, 64, 175, 0.08);
+}
+

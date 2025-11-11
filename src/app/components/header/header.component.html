@@ -62,14 +62,25 @@
         <h3>Parámetros Nómina Electrónica DIAN</h3>
       </div>
       
-      <app-lotes-rows 
-        [lotes]="lotes()"
-        (filterChange)="onLotesFilterChange($event)"
-        (actionCrear)="openLoteModal()"
-        (actionClonar)="onClonarLote($event)"
-        (actionEliminar)="onEliminarLote($event)"
-        (candadoChange)="onCandadoChange($event)">
-      </app-lotes-rows>
+      @if (!usePrimeLotesTable()) {
+        <app-lotes-rows 
+          [lotes]="lotes()"
+          (filterChange)="onLotesFilterChange($event)"
+          (actionCrear)="openLoteModal()"
+          (actionClonar)="onClonarLote($event)"
+          (actionEliminar)="onEliminarLote($event)"
+          (candadoChange)="onCandadoChange($event)">
+        </app-lotes-rows>
+      } @else {
+        <app-prime-lotes-table
+          [lotes]="lotes()"
+          (filterChange)="onLotesFilterChange($event)"
+          (actionCrear)="openLoteModal()"
+          (actionClonar)="onClonarLote($event)"
+          (actionEliminar)="onEliminarLote($event)"
+          (candadoChange)="onCandadoChange($event)"
+        ></app-prime-lotes-table>
+      }
       
       <!-- Botón crear y Paginación para lotes -->
       <div class="lotes-footer-actions">        

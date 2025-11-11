@@ -16,6 +16,7 @@ import { ToastService } from '@shared/services/toast.service';
 import { ToastComponent } from '@app/components/toast/toast.component';
 import { LoaderService } from '@shared/services/loader.service';
 import { ConfirmationComponent } from '@app/components/confirmation/confirmation.component';
+import { PrimeLotesTableComponent } from '@app/components/prime-lotes-table/prime-lotes-table.component';
 import * as XLSX from 'xlsx-js-style';
 
 interface ComprobantesPaginationInfo {
@@ -28,7 +29,7 @@ interface ComprobantesPaginationInfo {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, FormsModule, LotesRowsComponent, EmpresasModalComponent, PaginationComponent, LoteModalComponent, ToastComponent, ConfirmationComponent],
+  imports: [CommonModule, FormsModule, LotesRowsComponent, EmpresasModalComponent, PaginationComponent, LoteModalComponent, ToastComponent, ConfirmationComponent, PrimeLotesTableComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
@@ -41,7 +42,7 @@ export class HeaderComponent implements OnInit {
   comprobantesChange = output<ComprobanteDian[]>();
   comprobantesPaginationChange = output<ComprobantesPaginationInfo>();
   comprobantesFilterChange = output<{codigoempleado?: string, nombre?: string}>();
-  exportComprobantes = output<void>();
+  usePrimeLotesTable = input<boolean>(false);
   
   // Lotes para mostrar en filas
   lotes = signal<Lote[]>([]);
@@ -625,7 +626,7 @@ export class HeaderComponent implements OnInit {
     this.loteToDelete = null;
   }
 
-  // Método para exportar lotes a Excel (todas las páginas)
+  // Método para exportar lotes a Excel (máximo 7 páginas)
   exportLotesToExcel(): void {
     const currentEmpresa = this.currentEmpresa();
     if (!currentEmpresa) {
@@ -634,7 +635,7 @@ export class HeaderComponent implements OnInit {
     }
 
     // Mostrar mensaje de carga
-    this.toastService.info('Cargando todos los lotes...');
+    this.toastService.info('Cargando lotes...');
     this.loaderService.show();
 
     // Obtener la URL de la primera página o construirla
@@ -642,20 +643,16 @@ export class HeaderComponent implements OnInit {
     let initialUrl: string;
 
     if (firstPageUrl) {
-      // Usar la URL de la primera página guardada
       initialUrl = firstPageUrl;
     } else {
-      // Si no hay URL guardada, obtener la primera página con los filtros actuales
       this.lotesService.getLotesByEmpresa(
         currentEmpresa.secuencia,
         this.lotesAnoFilter || undefined,
         this.lotesMesFilter || undefined
       ).subscribe({
         next: (response) => {
-          // Guardar la URL de la primera página
           this.lotesFirstPageUrl.set(response.first.$ref);
-          // Iniciar la obtención de todas las páginas
-          this.getAllLotesForExport(response.first.$ref);
+          this.getAllLotesForExport(response.first.$ref, currentEmpresa);
         },
         error: (error) => {
           this.loaderService.hide();
@@ -666,27 +663,25 @@ export class HeaderComponent implements OnInit {
       return;
     }
 
-    // Si ya tenemos la URL inicial, obtener todos los lotes
-    this.getAllLotesForExport(initialUrl);
+    this.getAllLotesForExport(initialUrl, currentEmpresa);
   }
 
-  // Método auxiliar para obtener todos los lotes de todas las páginas
-  private getAllLotesForExport(initialUrl: string): void {
-    // Función recursiva para obtener todas las páginas
-    const getAllLotes = (url: string, allLotes: Lote[] = []): Promise<Lote[]> => {
+  // Método auxiliar para obtener lotes (máximo 7 páginas)
+  private getAllLotesForExport(initialUrl: string, currentEmpresa: Empresa): void {
+    const MAX_PAGES = 7;
+    
+    const getAllLotes = (url: string, allLotes: Lote[] = [], pageCount: number = 1): Promise<Lote[]> => {
       return new Promise((resolve, reject) => {
         this.lotesService.getLotesByUrl(url).subscribe({
           next: (response) => {
-            // Agregar los lotes de esta página
             const updatedLotes = [...allLotes, ...response.items];
             
-            // Si hay siguiente página, continuar
-            if (response.next?.$ref) {
-              getAllLotes(response.next.$ref, updatedLotes)
+            // Si hay siguiente página y no hemos alcanzado el límite, continuar
+            if (response.next?.$ref && pageCount < MAX_PAGES) {
+              getAllLotes(response.next.$ref, updatedLotes, pageCount + 1)
                 .then(resolve)
                 .catch(reject);
             } else {
-              // No hay más páginas, retornar todos los lotes
               resolve(updatedLotes);
             }
           },
@@ -698,7 +693,6 @@ export class HeaderComponent implements OnInit {
       });
     };
 
-    // Obtener todos los lotes
     getAllLotes(initialUrl)
       .then((allLotes: Lote[]) => {
         this.loaderService.hide();
@@ -708,17 +702,8 @@ export class HeaderComponent implements OnInit {
           return;
         }
 
-        const currentEmpresa = this.currentEmpresa();
-        if (!currentEmpresa) {
-          return;
-        }
-
-        // Obtener el nombre de la empresa
         const empresaNombre = currentEmpresa.nombre || 'Empresa';
 
-        // Mapear los lotes a formato Excel con nombres de columnas legibles
-        // Excluir: Secuencia, Sucursal Pila, Notas, Tracking ID, Token
-        // Reemplazar Empresa con el nombre de la empresa
         const excelData = allLotes.map(lote => ({
           'Empresa': empresaNombre,
           'Año': lote.ano,
@@ -731,43 +716,22 @@ export class HeaderComponent implements OnInit {
           'Candado': lote.candado === 'S' ? 'Enviado' : 'Cancelado'
         }));
 
-        // Crear workbook y worksheet
         const worksheet = XLSX.utils.json_to_sheet(excelData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Lotes');
 
-        // Definir anchos de columnas (sin las columnas eliminadas)
         const columnWidths = [
-          { wch: 25 }, // Empresa (nombre completo)
-          { wch: 6 },  // Año
-          { wch: 12 }, // Mes
-          { wch: 8 },  // Lote
-          { wch: 12 }, // Consecutivo
-          { wch: 12 }, // Enviado
-          { wch: 25 }, // Fecha Envío (más ancho para evitar que aumente el alto)
-          { wch: 18 }, // Acción
-          { wch: 12 }  // Candado
+          { wch: 25 }, { wch: 6 }, { wch: 12 }, { wch: 8 },
+          { wch: 12 }, { wch: 12 }, { wch: 25 }, { wch: 18 }, { wch: 12 }
         ];
         worksheet['!cols'] = columnWidths;
 
-        // Obtener el rango de celdas
         const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
         
-        // Aplicar formato a los encabezados (fila 1)
         const headerStyle = {
-          fill: {
-            fgColor: { rgb: '4472C4' } // Azul
-          },
-          font: {
-            color: { rgb: 'FFFFFF' }, // Blanco
-            bold: true,
-            sz: 11
-          },
-          alignment: {
-            horizontal: 'center',
-            vertical: 'center',
-            wrapText: true
-          },
+          fill: { fgColor: { rgb: '4472C4' } },
+          font: { color: { rgb: 'FFFFFF' }, bold: true, sz: 11 },
+          alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
           border: {
             top: { style: 'thin', color: { rgb: 'FFFFFF' } },
             bottom: { style: 'thin', color: { rgb: 'FFFFFF' } },
@@ -776,20 +740,14 @@ export class HeaderComponent implements OnInit {
           }
         };
 
-        // Aplicar estilo a cada celda del encabezado
         for (let col = range.s.c; col <= range.e.c; col++) {
           const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
           if (!worksheet[cellAddress]) continue;
-          
           worksheet[cellAddress].s = headerStyle;
         }
 
-        // Aplicar formato a las celdas de datos
         const dataStyle = {
-          alignment: {
-            vertical: 'center',
-            wrapText: true
-          },
+          alignment: { vertical: 'center', wrapText: true },
           border: {
             top: { style: 'thin', color: { rgb: 'D0D0D0' } },
             bottom: { style: 'thin', color: { rgb: 'D0D0D0' } },
@@ -798,24 +756,19 @@ export class HeaderComponent implements OnInit {
           }
         };
 
-        // Aplicar estilo a las celdas de datos
         for (let row = range.s.r + 1; row <= range.e.r; row++) {
           for (let col = range.s.c; col <= range.e.c; col++) {
             const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
             if (!worksheet[cellAddress]) continue;
-            
             worksheet[cellAddress].s = { ...dataStyle };
           }
         }
 
-        // Congelar la primera fila (encabezados)
         worksheet['!freeze'] = { xSplit: 0, ySplit: 1, topLeftCell: 'A2', activePane: 'bottomLeft', state: 'frozen' };
 
-        // Generar nombre de archivo con fecha
         const fecha = new Date().toISOString().split('T')[0];
         const fileName = `Lotes_${empresaNombre}_${fecha}.xlsx`;
 
-        // Descargar el archivo
         XLSX.writeFile(workbook, fileName);
         
         this.toastService.success(`Se exportaron ${allLotes.length} lotes exitosamente`);
@@ -840,7 +793,7 @@ export class HeaderComponent implements OnInit {
     return procedimientosMap[codigo] || codigo;
   }
 
-  // Método para exportar comprobantes a Excel (todas las páginas)
+  // Método para exportar comprobantes a Excel (máximo 7 páginas)
   exportComprobantesToExcel(): void {
     const currentEmpresa = this.currentEmpresa();
     if (!currentEmpresa) {
@@ -848,18 +801,15 @@ export class HeaderComponent implements OnInit {
       return;
     }
 
-    // Mostrar mensaje de carga
-    this.toastService.info('Cargando todos los comprobantes...');
+    this.toastService.info('Cargando comprobantes...');
     this.loaderService.show();
 
-    // Obtener la URL inicial con los filtros actuales
     this.comprobantesDianService.getComprobantesBySecuencia(
       currentEmpresa.secuencia,
       this.comprobantesCodigoEmpleadoFilter || undefined,
       this.comprobantesNombreFilter || undefined
     ).subscribe({
       next: (response) => {
-        // Iniciar la obtención de todas las páginas
         this.getAllComprobantesForExport(response.first.$ref, currentEmpresa);
       },
       error: (error) => {
@@ -870,23 +820,22 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  // Método auxiliar para obtener todos los comprobantes de todas las páginas
+  // Método auxiliar para obtener comprobantes (máximo 7 páginas)
   private getAllComprobantesForExport(initialUrl: string, currentEmpresa: Empresa): void {
-    // Función recursiva para obtener todas las páginas
-    const getAllComprobantes = (url: string, allComprobantes: ComprobanteDian[] = []): Promise<ComprobanteDian[]> => {
+    const MAX_PAGES = 7;
+    
+    const getAllComprobantes = (url: string, allComprobantes: ComprobanteDian[] = [], pageCount: number = 1): Promise<ComprobanteDian[]> => {
       return new Promise((resolve, reject) => {
         this.comprobantesDianService.getComprobantesByUrl(url).subscribe({
           next: (response) => {
-            // Agregar los comprobantes de esta página
             const updatedComprobantes = [...allComprobantes, ...response.items];
             
-            // Si hay siguiente página, continuar
-            if (response.next?.$ref) {
-              getAllComprobantes(response.next.$ref, updatedComprobantes)
+            // Si hay siguiente página y no hemos alcanzado el límite, continuar
+            if (response.next?.$ref && pageCount < MAX_PAGES) {
+              getAllComprobantes(response.next.$ref, updatedComprobantes, pageCount + 1)
                 .then(resolve)
                 .catch(reject);
             } else {
-              // No hay más páginas, retornar todos los comprobantes
               resolve(updatedComprobantes);
             }
           },
@@ -898,7 +847,6 @@ export class HeaderComponent implements OnInit {
       });
     };
 
-    // Obtener todos los comprobantes
     getAllComprobantes(initialUrl)
       .then((allComprobantes: ComprobanteDian[]) => {
         this.loaderService.hide();
@@ -908,10 +856,8 @@ export class HeaderComponent implements OnInit {
           return;
         }
 
-        // Obtener el nombre de la empresa
         const empresaNombre = currentEmpresa.nombre || 'Empresa';
 
-        // Mapear los comprobantes a formato Excel con nombres de columnas legibles
         const excelData = allComprobantes.map(comp => ({
           'Empresa': empresaNombre,
           'Código Empleado': comp.empleado,
@@ -935,54 +881,25 @@ export class HeaderComponent implements OnInit {
           'Nov. Contractual': comp.nov_contractual || ''
         }));
 
-        // Crear workbook y worksheet
         const worksheet = XLSX.utils.json_to_sheet(excelData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Comprobantes');
 
-        // Definir anchos de columnas
         const columnWidths = [
-          { wch: 25 }, // Empresa
-          { wch: 15 }, // Código Empleado
-          { wch: 30 }, // Nombre Empleado
-          { wch: 12 }, // Consecutivo
-          { wch: 12 }, // Marcación
-          { wch: 20 }, // CUNE
-          { wch: 10 }, // Prefijo
-          { wch: 18 }, // Número Comprobante
-          { wch: 25 }, // Fecha Pago (más ancho para evitar que aumente el alto)
-          { wch: 15 }, // Devengado Total
-          { wch: 15 }, // Deducido Total
-          { wch: 15 }, // Redondeo Total
-          { wch: 18 }, // Comprobante Total
-          { wch: 15 }, // Sueldo Trabajado
-          { wch: 12 }, // Días Laborados
-          { wch: 15 }, // Auxilio Transporte
-          { wch: 15 }, // Fecha Desde
-          { wch: 15 }, // Fecha Hasta
-          { wch: 20 }, // Tracking ID
-          { wch: 15 }  // Nov. Contractual
+          { wch: 25 }, { wch: 15 }, { wch: 30 }, { wch: 12 },
+          { wch: 12 }, { wch: 20 }, { wch: 10 }, { wch: 18 },
+          { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
+          { wch: 18 }, { wch: 15 }, { wch: 12 }, { wch: 15 },
+          { wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 15 }
         ];
         worksheet['!cols'] = columnWidths;
 
-        // Obtener el rango de celdas
         const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
         
-        // Aplicar formato a los encabezados (fila 1)
         const headerStyle = {
-          fill: {
-            fgColor: { rgb: '4472C4' } // Azul
-          },
-          font: {
-            color: { rgb: 'FFFFFF' }, // Blanco
-            bold: true,
-            sz: 11
-          },
-          alignment: {
-            horizontal: 'center',
-            vertical: 'center',
-            wrapText: true
-          },
+          fill: { fgColor: { rgb: '4472C4' } },
+          font: { color: { rgb: 'FFFFFF' }, bold: true, sz: 11 },
+          alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
           border: {
             top: { style: 'thin', color: { rgb: 'FFFFFF' } },
             bottom: { style: 'thin', color: { rgb: 'FFFFFF' } },
@@ -991,20 +908,14 @@ export class HeaderComponent implements OnInit {
           }
         };
 
-        // Aplicar estilo a cada celda del encabezado
         for (let col = range.s.c; col <= range.e.c; col++) {
           const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
           if (!worksheet[cellAddress]) continue;
-          
           worksheet[cellAddress].s = headerStyle;
         }
 
-        // Aplicar formato a las celdas de datos
         const dataStyle = {
-          alignment: {
-            vertical: 'center',
-            wrapText: true
-          },
+          alignment: { vertical: 'center', wrapText: true },
           border: {
             top: { style: 'thin', color: { rgb: 'D0D0D0' } },
             bottom: { style: 'thin', color: { rgb: 'D0D0D0' } },
@@ -1013,24 +924,19 @@ export class HeaderComponent implements OnInit {
           }
         };
 
-        // Aplicar estilo a las celdas de datos
         for (let row = range.s.r + 1; row <= range.e.r; row++) {
           for (let col = range.s.c; col <= range.e.c; col++) {
             const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
             if (!worksheet[cellAddress]) continue;
-            
             worksheet[cellAddress].s = { ...dataStyle };
           }
         }
 
-        // Congelar la primera fila (encabezados)
         worksheet['!freeze'] = { xSplit: 0, ySplit: 1, topLeftCell: 'A2', activePane: 'bottomLeft', state: 'frozen' };
 
-        // Generar nombre de archivo con fecha
         const fecha = new Date().toISOString().split('T')[0];
         const fileName = `Comprobantes_${empresaNombre}_${fecha}.xlsx`;
 
-        // Descargar el archivo
         XLSX.writeFile(workbook, fileName);
         
         this.toastService.success(`Se exportaron ${allComprobantes.length} comprobantes exitosamente`);

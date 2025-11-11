@@ -1,0 +1,289 @@
+/* Desktop/tablet defaults */
+:host ::ng-deep .prime-comprobantes-table .p-datatable-wrapper {
+  overflow-x: auto;
+}
+:host {
+  display: block;
+}
+
+.prime-comprobantes-table-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.table-header {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.filter-toggle,
+.filter-clear {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--gray-300);
+  border-radius: 6px;
+  padding: 6px 10px;
+  background: var(--white);
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.filter-toggle:hover,
+.filter-clear:hover {
+  background: var(--gray-100);
+  border-color: var(--gray-400);
+}
+
+.prime-comprobantes-table-container {
+  width: 100%;
+}
+
+:host ::ng-deep .prime-comprobantes-table .p-datatable-table {
+  width: 100%;
+}
+
+:host ::ng-deep .prime-comprobantes-table .toggle-column {
+  width: 3.5rem;
+  text-align: center;
+}
+
+:host ::ng-deep .prime-comprobantes-table .toggle-column .p-button {
+  display: none;
+}
+
+:host ::ng-deep .prime-comprobantes-table .mobile-hidden {
+  display: table-cell;
+}
+
+:host ::ng-deep .prime-comprobantes-table th,
+:host ::ng-deep .prime-comprobantes-table td {
+  white-space: nowrap;
+  padding: 8px 12px;
+}
+
+:host ::ng-deep .prime-comprobantes-table .p-column-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mobile-only {
+  display: none;
+}
+
+.desktop-only {
+  display: table-cell;
+}
+
+.header-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.secondary-label {
+  font-size: 0.75rem;
+  color: var(--gray-600);
+  font-weight: 500;
+}
+
+.filter-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+:host ::ng-deep .prime-comprobantes-table .p-frozen-column {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  background: var(--white);
+  box-shadow: 2px 0 4px rgba(15, 23, 42, 0.05);
+}
+
+:host ::ng-deep .prime-comprobantes-table .p-frozen-column.employee-name-column {
+  left: 3.5rem;
+}
+
+:host ::ng-deep .prime-comprobantes-table .p-datatable-thead > tr th.p-frozen-column {
+  z-index: 5;
+}
+
+:host ::ng-deep .prime-comprobantes-table .toggle-column.p-frozen-column {
+  left: 0;
+  z-index: 6;
+}
+
+.employee-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.employee-code {
+  font-weight: 600;
+  color: var(--gray-800);
+}
+
+.employee-name {
+  font-size: 0.85rem;
+  color: var(--gray-600);
+}
+
+
+:host ::ng-deep .prime-comprobantes-table th {
+  background: var(--gray-50);
+  color: var(--gray-800);
+  font-weight: 600;
+}
+
+:host ::ng-deep .prime-comprobantes-table .p-datatable-thead > tr.filters-row {
+  display: table-row;
+}
+
+:host ::ng-deep .prime-comprobantes-table .p-datatable-thead > tr.filters-row.hidden {
+  display: none;
+}
+
+:host ::ng-deep .prime-comprobantes-table .p-datatable-thead > tr.filters-row th {
+  background: var(--white);
+}
+
+:host ::ng-deep .prime-comprobantes-table .p-datatable-thead > tr:nth-child(2) th {
+  background: var(--white);
+}
+
+:host ::ng-deep .prime-comprobantes-table .p-datatable-thead > tr:nth-child(2) input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--gray-700);
+  background: var(--gray-100);
+}
+
+.status-pill.status-enviado {
+  background: rgba(34, 197, 94, 0.18);
+  color: #047857;
+}
+
+.status-pill.status-rechazado {
+  background: rgba(248, 113, 113, 0.18);
+  color: #b91c1c;
+}
+
+.row-highlight {
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.row-expansion {
+  background: var(--gray-50);
+}
+
+.expansion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  padding: 12px;
+}
+
+.expansion-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--white);
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid var(--gray-200);
+}
+
+.expansion-item .label {
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 24px;
+  color: var(--gray-600);
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .header-label {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  /* Mobile overrides */
+  :host ::ng-deep .prime-comprobantes-table .p-datatable-wrapper {
+    overflow-x: hidden;
+  }
+
+  :host ::ng-deep .prime-comprobantes-table .p-frozen-column,
+  :host ::ng-deep .prime-comprobantes-table .toggle-column.p-frozen-column,
+  :host ::ng-deep .prime-comprobantes-table .p-datatable-thead > tr th.p-frozen-column {
+    position: static;
+    left: auto;
+    z-index: 1;
+    box-shadow: none;
+  }
+
+  .prime-comprobantes-table-wrapper {
+    gap: 16px;
+  }
+
+  .table-header {
+    justify-content: space-between;
+  }
+
+  :host ::ng-deep .prime-comprobantes-table .mobile-hidden {
+    display: none;
+  }
+
+  :host ::ng-deep .prime-comprobantes-table .toggle-column {
+    display: table-cell;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  :host ::ng-deep .prime-comprobantes-table .toggle-column .p-button {
+    display: inline-flex;
+  }
+
+  .employee-info {
+    gap: 4px;
+  }
+
+  .expansion-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+}
+

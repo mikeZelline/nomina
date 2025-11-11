@@ -1,0 +1,100 @@
+<p-table
+  #dt
+  [value]="data()"
+  [columns]="columns()"
+  [paginator]="paginator()"
+  [rows]="rows()"
+  [rowsPerPageOptions]="rowsPerPageOptions()"
+  [globalFilterFields]="globalFilterFields()"
+  [responsiveLayout]="responsiveLayout()"
+  [dataKey]="dataKey()"
+  [rowHover]="true"
+  [showCurrentPageReport]="true"
+  currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} registros"
+  [scrollable]="responsiveLayout() === 'scroll'"
+  scrollHeight="flex"
+  [tableStyle]="{ 'min-width': '800px' }">
+
+  @if (showGlobalFilter()) {
+    <ng-template pTemplate="caption">
+      <div class="prime-table-caption">
+        <span class="caption-title">Buscador</span>
+        <span class="caption-action">
+          <input
+            pInputText
+            type="text"
+            [ngModel]="searchValue()"
+            (ngModelChange)="searchValue.set($event); onGlobalFilter(dt, $event)"
+            placeholder="Buscar en todos los campos" />
+        </span>
+      </div>
+    </ng-template>
+  }
+
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      @if (enableRowExpansion()) {
+        <th class="expander-column"></th>
+      }
+      @for (col of columns; track col.field) {
+        <th [style.width]="col.width" [pSortableColumn]="col.sortable ? col.field : null">
+          <div class="header-cell">
+            <span>{{ col.header }}</span>
+            @if (col.sortable) {
+              <p-sortIcon [field]="col.field"></p-sortIcon>
+            }
+          </div>
+          @if (col.filter !== false) {
+            <p-columnFilter
+              display="menu"
+              [field]="col.field"
+              [matchMode]="col.filterMatchMode || 'contains'"
+              [type]="col.filterType || 'text'">
+            </p-columnFilter>
+          }
+        </th>
+      }
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+    <tr>
+      @if (enableRowExpansion()) {
+        <td class="expander-column">
+          <button
+            type="button"
+            pButton
+            pRipple
+            class="expander-button"
+            [pRowToggler]="rowData"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+            [text]="true"></button>
+        </td>
+      }
+      @for (col of columns; track col.field) {
+        <td>
+          {{ resolveField(rowData, col.field) || '-' }}
+        </td>
+      }
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="rowexpansion" let-data>
+    @if (rowExpansionTemplate(); as template) {
+      <ng-container *ngTemplateOutlet="template; context: { $implicit: data }"></ng-container>
+    } @else {
+      <div class="default-expansion">
+        <pre>{{ data | json }}</pre>
+      </div>
+    }
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [attr.colspan]="columns().length + (enableRowExpansion() ? 1 : 0)" class="empty-message">
+        No se encontraron registros.
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+

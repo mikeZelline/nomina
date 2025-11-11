@@ -13,6 +13,10 @@ export const routes: Routes = [
   {
     path: 'nomina',
     loadComponent: () => import('@app/modules/nomina/nomina.module').then(m => m.NominaModule)
+  },
+  {
+    path: 'nomina2',
+    loadComponent: () => import('@app/modules/nominav2/nominav2.module').then(m => m.Nominav2Module)
   }
 ];
 

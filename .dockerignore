@@ -1,50 +1,15 @@
-# Dependencies
 node_modules
-npm-debug.log
-yarn-error.log
-
-# Build output
 dist
 .angular
-
-# IDE
-.vscode
-.idea
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Git
+npm-debug.log
+Dockerfile*
+docker-compose*.yml
+*.md
+*.log
 .git
 .gitignore
-
-# Docker (keep nginx.conf)
-Dockerfile
-.dockerignore
-docker-compose.yml
-DOCKER.md
-
-# Documentation
-README.md
-*.md
-
-# Test coverage
+.vscode
 coverage
-.nyc_output
+tmp
+*.tsbuildinfo
 
-# Environment files
-.env
-.env.local
-.env.*.local
-
-# Cache
-.cache
-.parcel-cache
-
-# Logs
-logs
-*.log

@@ -1,0 +1,33 @@
+<section class="lotes-demo-section">
+  <div class="section-header">
+    <h3>Lotes Demo (PrimeNG)</h3>
+    <span class="section-description">Datos simulados para pruebas de visualización</span>
+  </div>
+
+  <app-prime-data-table
+    [data]="data()"
+    [columns]="columns"
+    [rows]="10"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    [enableRowExpansion]="true"
+    [rowExpansionKey]="'id'"
+  >
+    <ng-template #rowExpansion let-row>
+      <div class="expansion-panel">
+        <div class="expansion-row">
+          <span class="label">Notas:</span>
+          <span>{{ row.notas }}</span>
+        </div>
+        <div class="expansion-row">
+          <span class="label">Fecha de envío:</span>
+          <span>{{ row.fechaEnvio | date: 'medium' }}</span>
+        </div>
+        <div class="expansion-row">
+          <span class="label">Estado:</span>
+          <span [class.cancelado]="row.estado === 'Cancelado'">{{ row.estado }}</span>
+        </div>
+      </div>
+    </ng-template>
+  </app-prime-data-table>
+</section>
+

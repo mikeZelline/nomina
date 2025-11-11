@@ -1,0 +1,59 @@
+<div class="prime-table-wrapper">
+  @if (enableGlobalSearch() && filterFields().length > 0) {
+    <div class="prime-table-toolbar">
+      <input pInputText type="text" class="search-input" placeholder="Buscar..." (input)="onGlobalFilter($event.target.value)" />
+    </div>
+  }
+
+  <p-table
+    #tableRef
+    [value]="data()"
+    [columns]="columns()"
+    [rows]="rows()"
+    [paginator]="true"
+    [rowsPerPageOptions]="rowsPerPageOptions()"
+    [globalFilterFields]="filterFields()"
+    [dataKey]="rowExpansionKey()"
+    [rowExpandMode]="enableRowExpansion() ? 'single' : null"
+  >
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        @if (enableRowExpansion() && hasRowExpansionTemplate) {
+          <th class="expansion-column"></th>
+        }
+        @for (column of columns; track column.field) {
+          <th [ngClass]="column.styleClass" [style.width]="column.width">
+            <div class="header-cell">
+              <span>{{ column.header }}</span>
+              @if (column.filterable) {
+                <p-columnFilter [field]="column.field" display="menu"></p-columnFilter>
+              }
+            </div>
+          </th>
+        }
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-row let-columns="columns">
+      <tr>
+        @if (enableRowExpansion() && hasRowExpansionTemplate) {
+          <td class="expansion-column">
+            <button pButton type="button" class="p-button-text p-button-rounded" icon="pi pi-chevron-down" (click)="toggleRow(row)"></button>
+          </td>
+        }
+        @for (column of columns; track column.field) {
+          <td [ngClass]="column.styleClass">
+            {{ row[column.field] }}
+          </td>
+        }
+      </tr>
+    </ng-template>
+
+    @if (enableRowExpansion() && hasRowExpansionTemplate && expansionTemplate) {
+      <ng-template pTemplate="rowexpansion" let-row>
+        <ng-container *ngTemplateOutlet="expansionTemplate; context: { $implicit: row }"></ng-container>
+      </ng-template>
+    }
+  </p-table>
+</div>
+

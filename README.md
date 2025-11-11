@@ -124,6 +124,19 @@ npm start
 npm run build
 ```
 
+## Ejecución con Docker
+
+```bash
+# Construir la imagen
+docker build -t nomina-app .
+
+# Ejecutar el contenedor (publicará en http://localhost:4200)
+docker run --rm -p 4200:80 nomina-app
+
+# Alternativa con docker compose
+docker compose up --build
+```
+
 ## Próximos Pasos
 
 - Integración con API backend real
@@ -131,6 +144,8 @@ npm run build
 - Validaciones adicionales de formularios
 - Tests unitarios
 - PWA features
+
+
 
 
 

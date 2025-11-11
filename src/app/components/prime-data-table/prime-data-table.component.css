@@ -1,0 +1,27 @@
+.prime-table-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prime-table-toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.search-input {
+  width: 220px;
+}
+
+.header-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.expansion-column {
+  width: 56px;
+  text-align: center;
+}
+
