@@ -3,6 +3,6 @@ services:
     build:
       context: .
     ports:
-      - "4200:80"
+      - "8081:80"
     restart: unless-stopped
 
