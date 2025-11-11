@@ -7,10 +7,8 @@
     selectionMode="single"
     [selection]="selectedComprobanteModel"
     [loading]="loading() || isLoading()"
-    [scrollable]="isScrollable()"
-    [scrollHeight]="isScrollable() ? '410px' : ''"
     styleClass="prime-comprobantes-table"
-    [tableStyle]="tableStyles()"
+    [tableStyle]="tableStyle()"
     (onRowSelect)="onRowSelect($event)"
     (onRowUnselect)="onRowUnselect($event)"
     [expandedRowKeys]="expandedRows()"
@@ -19,92 +17,51 @@
   >
     <ng-template pTemplate="header">
       <tr>
-        <th class="toggle-column" pFrozenColumn></th>
-        <th pSortableColumn="empleado" pFrozenColumn class="employee-column">
-          <div class="header-label">
-            <span class="header-title">Cód. empleado</span>
-            <p-sortIcon field="empleado"></p-sortIcon>
-            <span class="mobile-only secondary-label">Nombre empleado</span>
-          </div>
+        <th style="width: 4rem"></th>
+        <th pSortableColumn="empleado">
+          Cód. empleado
+          <p-sortIcon field="empleado"></p-sortIcon>
         </th>
-        <th pSortableColumn="nombre_empleado" pFrozenColumn class="desktop-only">
+        <th pSortableColumn="nombre_empleado">
           Nombre empleado
           <p-sortIcon field="nombre_empleado"></p-sortIcon>
         </th>
-        <th pSortableColumn="cune" class="mobile-hidden">
+        <th class="desktop-only" pSortableColumn="cune">
           CUNE
           <p-sortIcon field="cune"></p-sortIcon>
         </th>
-        <th pSortableColumn="numerocomprobantedian" class="mobile-hidden">
+        <th class="desktop-only" pSortableColumn="numerocomprobantedian">
           # Comprobante
           <p-sortIcon field="numerocomprobantedian"></p-sortIcon>
         </th>
-        <th pSortableColumn="marcacion" class="mobile-hidden">
+        <th class="desktop-only" pSortableColumn="marcacion">
           Marcación
           <p-sortIcon field="marcacion"></p-sortIcon>
         </th>
-        <th pSortableColumn="devengadototal" class="mobile-hidden">
+        <th class="desktop-only" pSortableColumn="devengadototal">
           Devengado total
           <p-sortIcon field="devengadototal"></p-sortIcon>
         </th>
-        <th pSortableColumn="deducidototal" class="mobile-hidden">
+        <th class="desktop-only" pSortableColumn="deducidototal">
           Deducido total
           <p-sortIcon field="deducidototal"></p-sortIcon>
         </th>
-        <th pSortableColumn="comprobantetotal" class="mobile-hidden">
-          Comprob. total
-          <p-sortIcon field="comprobantetotal"></p-sortIcon>
-        </th>
-        <th pSortableColumn="diaslaborados" class="mobile-hidden">
-          Días L.
-          <p-sortIcon field="diaslaborados"></p-sortIcon>
-        </th>
-        <th pSortableColumn="sueldotrabajado" class="mobile-hidden">
-          Sueldo trabaj.
-          <p-sortIcon field="sueldotrabajado"></p-sortIcon>
-        </th>
-        <th pSortableColumn="tracking_id" class="mobile-hidden">
-          Tracking ID
-          <p-sortIcon field="tracking_id"></p-sortIcon>
-        </th>
-        <th pSortableColumn="fechadesde" class="mobile-hidden">
-          Fecha desde
-          <p-sortIcon field="fechadesde"></p-sortIcon>
-        </th>
-        <th pSortableColumn="fechahasta" class="mobile-hidden">
-          Fecha hasta
-          <p-sortIcon field="fechahasta"></p-sortIcon>
-        </th>
-        <th pSortableColumn="nov_contractual" class="mobile-hidden">
-          Nov. Contractual
-          <p-sortIcon field="nov_contractual"></p-sortIcon>
-        </th>
       </tr>
-       @if (!showFilters() && comprobantes().length === 0) {
-         <tr class="filters-row hidden"></tr>
-       } @else {
-         <tr class="filters-row">
+      @if (!showFilters() && comprobantes().length === 0) {
+        <tr class="filters-row hidden"></tr>
+      } @else {
+        <tr class="filters-row">
           <th></th>
           <th>
-            <div class="filter-stack">
-              <input
-                pInputText
-                type="text"
-                placeholder="Filtrar código..."
-                [value]="codigoEmpleadoFilter()"
-                (input)="onCodigoEmpleadoFilterInput($event)"
-              />
-              <input
-                class="mobile-only"
-                pInputText
-                type="text"
-                placeholder="Filtrar nombre..."
-                [value]="nombreEmpleadoFilter()"
-                (input)="onNombreEmpleadoFilterInput($event)"
-              />
-            </div>
+            <input
+              pInputText
+              type="text"
+              placeholder="Filtrar código..."
+              [value]="codigoEmpleadoFilter()"
+              (input)="onCodigoEmpleadoFilterInput($event)"
+            />
           </th>
-          <th class="desktop-only">
+          <th>
             <input
               pInputText
               type="text"
@@ -113,7 +70,7 @@
               (input)="onNombreEmpleadoFilterInput($event)"
             />
           </th>
-          <th colspan="12"></th>
+          <th class="desktop-only" colspan="5"></th>
         </tr>
       }
     </ng-template>
@@ -124,7 +81,7 @@
         pRowExpansion
         [class.row-highlight]="selectedComprobanteModel?.secuencia === comprobante.secuencia"
       >
-        <td pFrozenColumn class="toggle-column">
+        <td class="toggle-column">
           <button
             type="button"
             pButton
@@ -136,14 +93,13 @@
             [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
           ></button>
         </td>
-        <td pFrozenColumn class="employee-column">
+        <td>
           <div class="employee-info">
             <span class="employee-code">{{ comprobante.empleado }}</span>
-            <span class="employee-name mobile-only">{{ comprobante.nombre_empleado }}</span>
           </div>
         </td>
-        <td pFrozenColumn class="desktop-only employee-name-column">{{ comprobante.nombre_empleado }}</td>
-        <td class="mobile-hidden">
+        <td>{{ comprobante.nombre_empleado }}</td>
+        <td class="cune-cell desktop-only">
           <input
             pInputText
             type="text"
@@ -151,10 +107,11 @@
             (click)="$event.stopPropagation()"
             (dblclick)="onCuneDblClick(comprobante, $event)"
             (blur)="onCuneChange(comprobante, $event)"
+            class="cune-inline-input"
           />
         </td>
-        <td class="mobile-hidden">{{ comprobante.numerocomprobantedian }}</td>
-        <td class="mobile-hidden">
+        <td class="desktop-only">{{ comprobante.numerocomprobantedian }}</td>
+        <td class="desktop-only">
           <span
             class="status-pill"
             [class.status-enviado]="comprobante.marcacion === 'ENVIADO'"
@@ -163,65 +120,215 @@
             {{ comprobante.marcacion }}
           </span>
         </td>
-        <td class="mobile-hidden">{{ formatCurrency(comprobante.devengadototal) }}</td>
-        <td class="mobile-hidden">{{ formatCurrency(comprobante.deducidototal) }}</td>
-        <td class="mobile-hidden">{{ formatCurrency(comprobante.comprobantetotal) }}</td>
-        <td class="mobile-hidden">{{ comprobante.diaslaborados }}</td>
-        <td class="mobile-hidden">{{ formatCurrency(comprobante.sueldotrabajado) }}</td>
-        <td class="mobile-hidden">{{ comprobante.tracking_id || '-' }}</td>
-        <td class="mobile-hidden">{{ formatDate(comprobante.fechadesde) }}</td>
-        <td class="mobile-hidden">{{ formatDate(comprobante.fechahasta) }}</td>
-        <td class="mobile-hidden">{{ comprobante.nov_contractual || '-' }}</td>
+        <td class="desktop-only">{{ formatCurrency(comprobante.devengadototal) }}</td>
+        <td class="desktop-only">{{ formatCurrency(comprobante.deducidototal) }}</td>
       </tr>
     </ng-template>
 
     <ng-template #expandedrow pTemplate="rowexpansion" let-comprobante>
       <tr class="row-expansion">
-        <td colspan="15">
-          <div class="expansion-grid">
-            <div class="expansion-item">
-              <span class="label">CUNE</span>
-              <span>{{ comprobante.cune || '-' }}</span>
-            </div>
-            <div class="expansion-item">
-              <span class="label"># Comprobante</span>
-              <span>{{ comprobante.numerocomprobantedian }}</span>
-            </div>
-            <div class="expansion-item">
-              <span class="label">Devengado total</span>
-              <span>{{ formatCurrency(comprobante.devengadototal) }}</span>
-            </div>
-            <div class="expansion-item">
-              <span class="label">Deducido total</span>
-              <span>{{ formatCurrency(comprobante.deducidototal) }}</span>
-            </div>
-            <div class="expansion-item">
-              <span class="label">Comprob. total</span>
-              <span>{{ formatCurrency(comprobante.comprobantetotal) }}</span>
-            </div>
-            <div class="expansion-item">
-              <span class="label">Días laborados</span>
-              <span>{{ comprobante.diaslaborados }}</span>
-            </div>
-            <div class="expansion-item">
-              <span class="label">Sueldo trabaj.</span>
-              <span>{{ formatCurrency(comprobante.sueldotrabajado) }}</span>
-            </div>
-            <div class="expansion-item">
-              <span class="label">Tracking ID</span>
-              <span>{{ comprobante.tracking_id || '-' }}</span>
-            </div>
-            <div class="expansion-item">
-              <span class="label">Fecha desde</span>
-              <span>{{ formatDate(comprobante.fechadesde) }}</span>
-            </div>
-            <div class="expansion-item">
-              <span class="label">Fecha hasta</span>
-              <span>{{ formatDate(comprobante.fechahasta) }}</span>
-            </div>
-            <div class="expansion-item">
-              <span class="label">Nov. Contractual</span>
-              <span>{{ comprobante.nov_contractual || '-' }}</span>
+        <td colspan="8">
+          <div class="detail-scroll-wrapper">
+            <div class="detail-scroll-inner">
+              <table class="detail-full-table">
+                <thead>
+                  <tr>
+                    <th class="mobile-only">CUNE</th>
+                    <th class="mobile-only"># Comprobante</th>
+                    <th class="mobile-only">Marcación</th>
+                    <th class="mobile-only">Devengado total</th>
+                    <th class="mobile-only">Deducido total</th>
+                    <th>Secuencia</th>
+                    <th>Consecutivo</th>
+                    <th>Comprob. total</th>
+                    <th>Días L.</th>
+                    <th>Sueldo trabaj.</th>
+                    <th>A. transporte</th>
+                    <th>Manu. aloja sal.</th>
+                    <th>Manu. aloja no sal.</th>
+                    <th>Hora ED</th>
+                    <th>Hora EN</th>
+                    <th>Hora RN</th>
+                    <th>Hora EDF</th>
+                    <th>Hora RDF</th>
+                    <th>Hora ENF</th>
+                    <th>Hora RNF</th>
+                    <th>Vacaciones com.</th>
+                    <th>Días vac. com.</th>
+                    <th>Vacaciones comp.</th>
+                    <th>Días vac. comp.</th>
+                    <th>Prima legal</th>
+                    <th>Días prima legal</th>
+                    <th>Prima no salarial</th>
+                    <th>Cesantías</th>
+                    <th>Int. cesantías</th>
+                    <th>Incapacidades</th>
+                    <th>Días incap.</th>
+                    <th>Maternidad/Paternidad</th>
+                    <th>Días maternidad</th>
+                    <th>Licencia rem.</th>
+                    <th>Días lic. rem.</th>
+                    <th>Licencia no rem.</th>
+                    <th>Días lic. no rem.</th>
+                    <th>Bonif. salarial</th>
+                    <th>Bonif. no salarial</th>
+                    <th>Auxilio salarial</th>
+                    <th>Auxilio no salarial</th>
+                    <th>Huelga</th>
+                    <th>Días huelga</th>
+                    <th>Otros salariales</th>
+                    <th>Otros no salariales</th>
+                    <th>Comp. ordinario</th>
+                    <th>Comp. extra</th>
+                    <th>Bono electrónico sal.</th>
+                    <th>Bono electrónico no sal.</th>
+                    <th>Bono elec. aliment. sal.</th>
+                    <th>Bono elec. aliment. no sal.</th>
+                    <th>Comisión</th>
+                    <th>Pago terceros</th>
+                    <th>Anticipo</th>
+                    <th>Dotación</th>
+                    <th>Apoyo sostenimiento</th>
+                    <th>Teletrabajo</th>
+                    <th>Bonif. retiro</th>
+                    <th>Indemnización</th>
+                    <th>Pago reintegro</th>
+                    <th>Oblig. salud</th>
+                    <th>Oblig. pensión</th>
+                    <th>Oblig. solid. pensión</th>
+                    <th>Oblig. solid. subsistencia</th>
+                    <th>Desc. sindicato</th>
+                    <th>Desc. sanción pública</th>
+                    <th>Desc. sanción privada</th>
+                    <th>Desc. libranza</th>
+                    <th>Desc. terceros</th>
+                    <th>Desc. anticipos</th>
+                    <th>Desc. otras deudas</th>
+                    <th>Desc. pensión volunt.</th>
+                    <th>Desc. retefte</th>
+                    <th>Desc. ICA</th>
+                    <th>Desc. AFC</th>
+                    <th>Desc. cooperativa</th>
+                    <th>Desc. embargo</th>
+                    <th>Desc. plan complementario</th>
+                    <th>Desc. educación</th>
+                    <th>Desc. reintegro</th>
+                    <th>Desc. deuda empresa</th>
+                    <th>Tracking ID</th>
+                    <th>Fecha desde</th>
+                    <th>Fecha hasta</th>
+                    <th>Nov. contractual</th>
+                    <th>UUID designer</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="mobile-only">
+                      <input
+                        pInputText
+                        type="text"
+                        [value]="comprobante.cune || ''"
+                        (click)="$event.stopPropagation()"
+                        (dblclick)="onCuneDblClick(comprobante, $event)"
+                        (blur)="onCuneChange(comprobante, $event)"
+                      />
+                    </td>
+                    <td class="mobile-only">{{ comprobante.numerocomprobantedian }}</td>
+                    <td class="mobile-only">
+                      <span
+                        class="status-pill"
+                        [class.status-enviado]="comprobante.marcacion === 'ENVIADO'"
+                        [class.status-rechazado]="comprobante.marcacion === 'RECHAZADO'"
+                      >
+                        {{ comprobante.marcacion }}
+                      </span>
+                    </td>
+                    <td class="mobile-only">{{ formatCurrency(comprobante.devengadototal) }}</td>
+                    <td class="mobile-only">{{ formatCurrency(comprobante.deducidototal) }}</td>
+                    <td>{{ comprobante.secuencia }}</td>
+                    <td>{{ comprobante.consecutivo }}</td>
+                    <td>{{ formatCurrency(comprobante.comprobantetotal) }}</td>
+                    <td>{{ comprobante.diaslaborados }}</td>
+                    <td>{{ formatCurrency(comprobante.sueldotrabajado) }}</td>
+                    <td>{{ formatCurrency(comprobante.aux_transporte) }}</td>
+                    <td>{{ formatCurrency(comprobante.manu_aloja_salarial) }}</td>
+                    <td>{{ formatCurrency(comprobante.manu_aloja_nosalarial) }}</td>
+                    <td>{{ formatCurrency(comprobante.hora_ed) }}</td>
+                    <td>{{ formatCurrency(comprobante.hora_en) }}</td>
+                    <td>{{ formatCurrency(comprobante.hora_rn) }}</td>
+                    <td>{{ formatCurrency(comprobante.hora_edf) }}</td>
+                    <td>{{ formatCurrency(comprobante.hora_rdf) }}</td>
+                    <td>{{ formatCurrency(comprobante.hora_enf) }}</td>
+                    <td>{{ formatCurrency(comprobante.hora_rnf) }}</td>
+                    <td>{{ formatCurrency(comprobante.vaca_comun) }}</td>
+                    <td>{{ comprobante.vaca_dias_comun }}</td>
+                    <td>{{ formatCurrency(comprobante.vaca_compe) }}</td>
+                    <td>{{ comprobante.vaca_dias_compe }}</td>
+                    <td>{{ formatCurrency(comprobante.primalegal) }}</td>
+                    <td>{{ comprobante.dias_primalegal }}</td>
+                    <td>{{ formatCurrency(comprobante.prima_nosalarial) }}</td>
+                    <td>{{ formatCurrency(comprobante.cesantias) }}</td>
+                    <td>{{ formatCurrency(comprobante.interesescesantias) }}</td>
+                    <td>{{ formatCurrency(comprobante.incapacidades) }}</td>
+                    <td>{{ comprobante.incapacidades_dias }}</td>
+                    <td>{{ formatCurrency(comprobante.maternidad_paternidad) }}</td>
+                    <td>{{ comprobante.maternidad_dias }}</td>
+                    <td>{{ formatCurrency(comprobante.licencia_remunerada) }}</td>
+                    <td>{{ comprobante.licencia_remunerada_dias }}</td>
+                    <td>{{ formatCurrency(comprobante.licencia_noremunerada) }}</td>
+                    <td>{{ comprobante.licencia_noremunerada_dias }}</td>
+                    <td>{{ formatCurrency(comprobante.bonificacion_salarial) }}</td>
+                    <td>{{ formatCurrency(comprobante.bonificacion_nosalarial) }}</td>
+                    <td>{{ formatCurrency(comprobante.auxilio_salarial) }}</td>
+                    <td>{{ formatCurrency(comprobante.auxilio_nosalarial) }}</td>
+                    <td>{{ formatCurrency(comprobante.huelga) }}</td>
+                    <td>{{ comprobante.huelga_dias }}</td>
+                    <td>{{ formatCurrency(comprobante.otros_salariales) }}</td>
+                    <td>{{ formatCurrency(comprobante.otros_nosalariales) }}</td>
+                    <td>{{ formatCurrency(comprobante.comp_ordinario) }}</td>
+                    <td>{{ formatCurrency(comprobante.comp_extra) }}</td>
+                    <td>{{ formatCurrency(comprobante.bono_electronico_salarial) }}</td>
+                    <td>{{ formatCurrency(comprobante.bono_electronico_nosalarial) }}</td>
+                    <td>{{ formatCurrency(comprobante.bono_elec_aliment_salarial) }}</td>
+                    <td>{{ formatCurrency(comprobante.bono_elec_aliment_nosalarial) }}</td>
+                    <td>{{ formatCurrency(comprobante.comision) }}</td>
+                    <td>{{ formatCurrency(comprobante.pago_terceros) }}</td>
+                    <td>{{ formatCurrency(comprobante.anticipo) }}</td>
+                    <td>{{ formatCurrency(comprobante.dotacion) }}</td>
+                    <td>{{ formatCurrency(comprobante.apoyo_sostenimiento) }}</td>
+                    <td>{{ formatCurrency(comprobante.teletrabajo) }}</td>
+                    <td>{{ formatCurrency(comprobante.bonificacion_retiro) }}</td>
+                    <td>{{ formatCurrency(comprobante.indemnizacion) }}</td>
+                    <td>{{ formatCurrency(comprobante.pago_reintegro) }}</td>
+                    <td>{{ formatCurrency(comprobante.obligatorio_salud) }}</td>
+                    <td>{{ formatCurrency(comprobante.obligatorio_pension) }}</td>
+                    <td>{{ formatCurrency(comprobante.obligatorio_solid_pension) }}</td>
+                    <td>{{ formatCurrency(comprobante.obligatorio_solid_subsistencia) }}</td>
+                    <td>{{ formatCurrency(comprobante.descuento_sindicato) }}</td>
+                    <td>{{ formatCurrency(comprobante.descuento_sancion_publica) }}</td>
+                    <td>{{ formatCurrency(comprobante.descuento_sancion_privada) }}</td>
+                    <td>{{ formatCurrency(comprobante.descuento_libranza) }}</td>
+                    <td>{{ formatCurrency(comprobante.descuento_terceros) }}</td>
+                    <td>{{ formatCurrency(comprobante.descuento_anticipos) }}</td>
+                    <td>{{ formatCurrency(comprobante.descuento_otras_deudas) }}</td>
+                    <td>{{ formatCurrency(comprobante.descuento_pension_volunt) }}</td>
+                    <td>{{ formatCurrency(comprobante.descuento_retefte) }}</td>
+                    <td>{{ formatCurrency(comprobante.descuento_ica) }}</td>
+                    <td>{{ formatCurrency(comprobante.descuento_afc) }}</td>
+                    <td>{{ formatCurrency(comprobante.descuento_cooperativa) }}</td>
+                    <td>{{ formatCurrency(comprobante.descuento_embargo) }}</td>
+                    <td>{{ formatCurrency(comprobante.descuento_plan_complementario) }}</td>
+                    <td>{{ formatCurrency(comprobante.descuento_educacion) }}</td>
+                    <td>{{ formatCurrency(comprobante.descuento_reintegro) }}</td>
+                    <td>{{ formatCurrency(comprobante.descuento_deuda_empresa) }}</td>
+                    <td>{{ comprobante.tracking_id || '-' }}</td>
+                    <td>{{ formatDate(comprobante.fechadesde) }}</td>
+                    <td>{{ formatDate(comprobante.fechahasta) }}</td>
+                    <td>{{ comprobante.nov_contractual }}</td>
+                    <td>{{ comprobante.uuid_designer || '-' }}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </td>
@@ -230,13 +337,14 @@
 
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="15" class="empty-state">No hay comprobantes disponibles.</td>
+        <td colspan="8" class="empty-state">No hay comprobantes disponibles.</td>
       </tr>
     </ng-template>
   </p-table>
 
   <div class="pagination-container" *ngIf="comprobantes().length > 0">
     <app-pagination
+      style="width: 100%;"
       [currentPage]="currentPage()"
       [firstPageUrl]="firstPageUrl()"
       [nextPageUrl]="nextPageUrl()"

@@ -1,11 +1,11 @@
-/* Desktop/tablet defaults */
-:host ::ng-deep .prime-comprobantes-table .p-datatable-wrapper {
-  overflow-x: auto;
-}
-:host {
-  display: block;
+.desktop-only {
+  display: table-cell;
 }
 
+.mobile-only {
+  display: none;
+}
+/* Desktop/tablet defaults */
 .prime-comprobantes-table-wrapper {
   display: flex;
   flex-direction: column;
@@ -13,51 +13,24 @@
   width: 100%;
 }
 
-.table-header {
+.table-toolbar {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
 }
 
-.filter-toggle,
-.filter-clear {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: 1px solid var(--gray-300);
-  border-radius: 6px;
-  padding: 6px 10px;
-  background: var(--white);
-  color: var(--gray-700);
-  cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.filter-toggle:hover,
-.filter-clear:hover {
-  background: var(--gray-100);
-  border-color: var(--gray-400);
+.toolbar-button {
+  min-width: 160px;
 }
 
 .prime-comprobantes-table-container {
   width: 100%;
 }
 
-:host ::ng-deep .prime-comprobantes-table .p-datatable-table {
-  width: 100%;
-}
-
 :host ::ng-deep .prime-comprobantes-table .toggle-column {
-  width: 3.5rem;
+  width: 4.5rem;
   text-align: center;
-}
-
-:host ::ng-deep .prime-comprobantes-table .toggle-column .p-button {
-  display: none;
-}
-
-:host ::ng-deep .prime-comprobantes-table .mobile-hidden {
-  display: table-cell;
 }
 
 :host ::ng-deep .prime-comprobantes-table th,
@@ -66,57 +39,13 @@
   padding: 8px 12px;
 }
 
-:host ::ng-deep .prime-comprobantes-table .p-column-title {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+:host ::ng-deep .prime-comprobantes-table .p-datatable-table {
+  table-layout: fixed;
+  width: 100%;
 }
 
-.mobile-only {
-  display: none;
-}
-
-.desktop-only {
-  display: table-cell;
-}
-
-.header-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.secondary-label {
-  font-size: 0.75rem;
-  color: var(--gray-600);
-  font-weight: 500;
-}
-
-.filter-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-:host ::ng-deep .prime-comprobantes-table .p-frozen-column {
-  position: sticky;
-  left: 0;
-  z-index: 4;
-  background: var(--white);
-  box-shadow: 2px 0 4px rgba(15, 23, 42, 0.05);
-}
-
-:host ::ng-deep .prime-comprobantes-table .p-frozen-column.employee-name-column {
-  left: 3.5rem;
-}
-
-:host ::ng-deep .prime-comprobantes-table .p-datatable-thead > tr th.p-frozen-column {
-  z-index: 5;
-}
-
-:host ::ng-deep .prime-comprobantes-table .toggle-column.p-frozen-column {
-  left: 0;
-  z-index: 6;
+:host ::ng-deep .prime-comprobantes-table .p-datatable-tbody > tr.row-expansion > td {
+  padding: 0;
 }
 
 .employee-info {
@@ -128,6 +57,14 @@
 .employee-code {
   font-weight: 600;
   color: var(--gray-800);
+}
+
+.cune-cell {
+  min-width: 12rem;
+}
+
+:host ::ng-deep .cune-inline-input {
+  width: 100%;
 }
 
 .employee-name {
@@ -186,34 +123,106 @@
   color: #b91c1c;
 }
 
-.row-highlight {
-  background: rgba(37, 99, 235, 0.08);
-}
-
 .row-expansion {
   background: var(--gray-50);
 }
 
-.expansion-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
-  padding: 12px;
-}
-
-.expansion-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  background: var(--white);
-  border-radius: 8px;
-  padding: 10px;
+.detail-scroll-wrapper {
   border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 12px;
+  background: var(--gray-50);
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
 }
 
-.expansion-item .label {
+.detail-scroll-inner {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.detail-scroll-inner::-webkit-scrollbar {
+  height: 8px;
+}
+
+.detail-scroll-inner::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: 4px;
+}
+
+.detail-scroll-inner::-webkit-scrollbar-track {
+  background: var(--gray-100);
+}
+
+:host ::ng-deep .detail-scroll-wrapper input[pinputtext] {
+  width: 160px;
+}
+
+.detail-full-table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+}
+
+.detail-full-table th,
+.detail-full-table td {
+  padding: 8px 12px;
+  border: 1px solid var(--gray-200);
+  white-space: nowrap;
+  text-align: left;
+  background: var(--white);
+}
+
+.detail-full-table th {
+  background: var(--gray-100);
   font-weight: 600;
-  color: var(--gray-700);
+  color: var(--gray-800);
+}
+
+@media (max-width: 768px) {
+  .prime-comprobantes-table-container {
+    width: 100%;
+  }
+
+  .desktop-only {
+    display: none !important;
+  }
+
+  .mobile-only {
+    display: table-cell;
+  }
+
+  :host ::ng-deep .prime-comprobantes-table .p-datatable-table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  :host ::ng-deep .prime-comprobantes-table .p-datatable-thead > tr > th {
+    white-space: normal;
+    font-size: 0.85rem;
+    padding: 10px 8px;
+  }
+
+  :host ::ng-deep .prime-comprobantes-table .p-datatable-tbody > tr > td {
+    padding: 10px 8px;
+  }
+
+  :host ::ng-deep .prime-comprobantes-table .p-datatable-thead > tr > th:nth-child(2),
+  :host ::ng-deep .prime-comprobantes-table .p-datatable-tbody > tr > td:nth-child(2) {
+    width: 48%;
+  }
+
+  :host ::ng-deep .prime-comprobantes-table .p-datatable-thead > tr > th:nth-child(3),
+  :host ::ng-deep .prime-comprobantes-table .p-datatable-tbody > tr > td:nth-child(3) {
+    width: 48%;
+  }
+
+  :host ::ng-deep .prime-comprobantes-table .filters-row input {
+    width: 100%;
+  }
 }
 
 .pagination-container {
@@ -227,63 +236,5 @@
   padding: 24px;
   color: var(--gray-600);
   font-weight: 500;
-}
-
-@media (max-width: 768px) {
-  .header-label {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-  }
-
-  /* Mobile overrides */
-  :host ::ng-deep .prime-comprobantes-table .p-datatable-wrapper {
-    overflow-x: hidden;
-  }
-
-  :host ::ng-deep .prime-comprobantes-table .p-frozen-column,
-  :host ::ng-deep .prime-comprobantes-table .toggle-column.p-frozen-column,
-  :host ::ng-deep .prime-comprobantes-table .p-datatable-thead > tr th.p-frozen-column {
-    position: static;
-    left: auto;
-    z-index: 1;
-    box-shadow: none;
-  }
-
-  .prime-comprobantes-table-wrapper {
-    gap: 16px;
-  }
-
-  .table-header {
-    justify-content: space-between;
-  }
-
-  :host ::ng-deep .prime-comprobantes-table .mobile-hidden {
-    display: none;
-  }
-
-  :host ::ng-deep .prime-comprobantes-table .toggle-column {
-    display: table-cell;
-  }
-
-  .mobile-only {
-    display: block;
-  }
-
-  .desktop-only {
-    display: none;
-  }
-
-  :host ::ng-deep .prime-comprobantes-table .toggle-column .p-button {
-    display: inline-flex;
-  }
-
-  .employee-info {
-    gap: 4px;
-  }
-
-  .expansion-grid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  }
 }
 

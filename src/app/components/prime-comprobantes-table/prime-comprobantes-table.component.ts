@@ -1,23 +1,23 @@
 import { CommonModule } from '@angular/common';
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
-  OnDestroy,
   ViewChild,
-  computed,
   effect,
   inject,
   input,
   output,
   signal
 } from '@angular/core';
+import { BreakpointObserver, Breakpoints, LayoutModule } from '@angular/cdk/layout';
 import { FormsModule } from '@angular/forms';
 import {
   Table,
   TableModule,
   TableRowSelectEvent,
-  TableRowUnSelectEvent
+  TableRowUnSelectEvent,
+  TableRowExpandEvent,
+  TableRowCollapseEvent
 } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -26,13 +26,13 @@ import { ComprobanteDian } from '@shared/models/comprobante-dian.interface';
 import { PaginationComponent } from '@app/components/pagination/pagination.component';
 import { CuneModalComponent } from '@app/components/cune-modal/cune-modal.component';
 import { ComprobantesDianService } from '@shared/services/comprobantes-dian.service';
-import { TableRowExpandEvent, TableRowCollapseEvent } from 'primeng/table';
 
 @Component({
   selector: 'app-prime-comprobantes-table',
   standalone: true,
   imports: [
     CommonModule,
+    LayoutModule,
     FormsModule,
     TableModule,
     InputTextModule,
@@ -45,7 +45,7 @@ import { TableRowExpandEvent, TableRowCollapseEvent } from 'primeng/table';
   styleUrls: ['./prime-comprobantes-table.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PrimeComprobantesTableComponent implements AfterViewInit, OnDestroy {
+export class PrimeComprobantesTableComponent {
   @ViewChild('dt') table?: Table;
 
   comprobantes = input.required<ComprobanteDian[]>();
@@ -68,33 +68,48 @@ export class PrimeComprobantesTableComponent implements AfterViewInit, OnDestroy
   nombreEmpleadoFilter = signal<string>('');
 
   expandedRows = signal<Record<string, boolean>>({});
-
   // CUNE modal state
   showCuneModal = signal<boolean>(false);
   selectedComprobanteForCune = signal<ComprobanteDian | null>(null);
 
   protected selectedComprobanteModel: ComprobanteDian | null = null;
+  protected readonly tableStyle = signal<Record<string, string>>({});
 
   private readonly comprobantesService = inject(ComprobantesDianService);
-  private readonly mediaQuery = window.matchMedia('(max-width: 768px)');
-  private readonly mediaQueryListener = (event: MediaQueryListEvent): void =>
-    this.isMobile.set(event.matches);
-
-  readonly isMobile = signal(this.mediaQuery.matches);
-  readonly tableStyles = computed(() =>
-    this.isMobile() ? { minWidth: '100%' } : { minWidth: '120rem' }
-  );
-  readonly isScrollable = computed(() => !this.isMobile());
+  private readonly breakpointObserver = inject(BreakpointObserver);
 
   constructor() {
     effect(() => {
       this.selectedComprobanteModel = this.selectedComprobante();
     });
-    this.mediaQuery.addEventListener('change', this.mediaQueryListener);
-  }
+    effect(() => {
+      const breakpointSub = this.breakpointObserver
+        .observe([Breakpoints.Handset])
+        .subscribe((state) => {
+          if (state.matches) {
+            this.tableStyle.set({});
+          } else {
+            this.tableStyle.set({ 'min-width': '60rem' });
+          }
+        });
 
-  ngOnDestroy(): void {
-    this.mediaQuery.removeEventListener('change', this.mediaQueryListener);
+      return () => breakpointSub.unsubscribe();
+    });
+    effect(() => {
+      const expanded = this.expandedRows();
+      const available = new Set(
+        this.comprobantes().map((comprobante) => String(comprobante.secuencia))
+      );
+      const filtered: Record<string, boolean> = {};
+      for (const key of Object.keys(expanded)) {
+        if (available.has(key)) {
+          filtered[key] = true;
+        }
+      }
+      if (!this.areRowStatesEqual(expanded, filtered)) {
+        this.expandedRows.set(filtered);
+      }
+    }, { allowSignalWrites: true });
   }
 
   onRowExpand(event: TableRowExpandEvent): void {
@@ -102,10 +117,15 @@ export class PrimeComprobantesTableComponent implements AfterViewInit, OnDestroy
     if (!data) {
       return;
     }
-    this.expandedRows.update((rows) => ({
-      ...rows,
-      [data.secuencia]: true
-    }));
+    this.expandedRows.update((rows) => {
+      if (rows[data.secuencia]) {
+        return rows;
+      }
+      return {
+        ...rows,
+        [data.secuencia]: true
+      };
+    });
   }
 
   onRowCollapse(event: TableRowCollapseEvent): void {
@@ -286,5 +306,34 @@ export class PrimeComprobantesTableComponent implements AfterViewInit, OnDestroy
       }
     });
   }
-}
 
+  expandAllRows(): void {
+    const expanded: Record<string, boolean> = {};
+    for (const comprobante of this.comprobantes()) {
+      expanded[comprobante.secuencia] = true;
+    }
+    this.expandedRows.set(expanded);
+  }
+
+  collapseAllRows(): void {
+    this.expandedRows.set({});
+  }
+
+  private areRowStatesEqual(
+    current: Record<string, boolean>,
+    next: Record<string, boolean>
+  ): boolean {
+    const currentKeys = Object.keys(current);
+    const nextKeys = Object.keys(next);
+    if (currentKeys.length !== nextKeys.length) {
+      return false;
+    }
+    for (const key of currentKeys) {
+      if (!(key in next) || current[key] !== next[key]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+}

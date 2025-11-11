@@ -104,6 +104,7 @@
   .main-actions button{
     justify-content: space-between;
     font-size: 12px;
+    justify-content: center;
   }
 
   .final-actions { 
